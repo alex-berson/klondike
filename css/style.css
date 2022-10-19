@@ -21,7 +21,7 @@
     /* --card-width: calc(var(--table-width) / 7 * 0.86); */
     --card-height: calc((var(--card-width) * 3.5 / 2.5));   
     --table-width: calc(var(--cell-width) * 7 + 42px);
-    --table-height: calc(var(--table-width) * 4 / 5);
+    --table-height: calc(var(--table-width) * 5 / 6);
 }
 
 body {
@@ -77,11 +77,11 @@ body:hover {
 }
 
 .row:not(:nth-child(1)):not(:nth-child(2))  {
-    margin-top: calc(var(--card-height) / 3 * 2 * -1);
+    margin-top: calc(var(--card-height) / 5 * 3 * -1);
 }
 
 .row:nth-child(1) {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 .cell {
@@ -92,7 +92,31 @@ body:hover {
     margin-right: 2px;
     border: 1px solid var(--table-color);
     border-radius: 4px;
-    background-color: darkgreen;
+    /* background-color: darkgreen; */
+}
+
+.foundation {
+    display: grid;
+    place-items: center;
+    color: var(--table-color);
+    background-color: #003800;
+    font-size: 8vmin;
+    font-weight: bold;
+}
+
+.stock {
+    display: grid;
+    place-items: center;
+    color: var(--table-color);
+    background-color: #003800;
+    /* font-size: 8vmin; */
+    /* font-weight: bold; */
+}
+
+.stock img {
+    /* margin-top: calc(var(--card-width) * 0.05); */
+    width: calc(var(--card-width) * 0.6);
+    height: calc(var(--card-width) * 0.6);
 }
 
 #designed {
@@ -130,7 +154,7 @@ body:hover {
     margin-left: 2px;
     margin-right: 2px;
     background-color: white;
-    border: 1px solid rgba(0,0,0,0.2);
+    border: 1px solid rgba(0,0,0,0.1);
     border-radius: 4px;
 }
 
@@ -245,8 +269,12 @@ img {
         /* margin-top: 50px; */
     }
 
+    .row:not(:nth-child(1)):not(:nth-child(2))  {
+        margin-top: calc(var(--card-height) / 3 * 2 * -1);
+    }
+
     .front {
-        border: 2px solid rgba(0,0,0,0.2);
+        border: 2px solid rgba(0,0,0,0.1);
         border-radius: 10px;
     }
     
@@ -258,6 +286,7 @@ img {
     .cell {
         margin-left: 5px;
         margin-right: 5px;
+        border-radius: 10px;
     }
 
     .rank {
