@@ -7,6 +7,34 @@ const suits = {
     '♣': 'clubs',
 } 
 
+const touchScreen = () => matchMedia('(hover: none)').matches;
+
+const zIndex = () => {
+
+    // console.log("ZINDEX");
+
+    let zIndex = topIndex();
+
+    zIndex < 5 ? zIndex *= 3 : zIndex *= 2;
+
+    return zIndex;
+}
+
+const topIndex = () => {
+
+    let cards = [...document.querySelectorAll(".waste")];
+    let zIndex = 0;
+    let topCard;
+
+    for (let card of cards) {
+        if (parseInt(card.style.zIndex) > parseInt(zIndex)) [zIndex, topCard] = [card.style.zIndex, card];
+    }
+
+    console.log(parseInt(zIndex));
+
+    return parseInt(zIndex) == 0 ? 1 : parseInt(zIndex);
+}
+
 const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -23,6 +51,35 @@ const safari = () => {
     if (sfri) return true;
      
     return false;
+}
+
+const removeZoom = (e) => {
+
+    let card = e.currentTarget;
+
+    card.style.transform = card.style.transform.replace("scale(1.1)", "");
+}
+
+const rankValue = (rank) => {
+
+    switch(rank) {
+        case "A":
+            rank = 1;
+            break;
+        case "J":
+            rank = 11;
+            break;
+        case "Q":
+            rank = 12;
+            break;
+        case "K":
+            rank = 13;
+            break;
+        default:
+            rank = parseInt(rank);
+    }
+
+    return rank;
 }
 
 const fillField = (topCell, cards, offset, delay, interval, duration) => {
@@ -82,30 +139,6 @@ const fillStock = (topCell, cards, offset, delay, interval, duration) => {
 
     return delay;
 }
-
-// const fillStock = (topCell, cards, offset, delay, interval, duration) => {
-
-//     let stockCell = document.querySelector(".stock");
-
-//     for (let i = pyramidSize; i < deckSize - 1; i++) {
-
-//         delay += interval;
-
-//         let card = cards[i];
-
-//         card.style.left = topCell.offsetLeft + "px";
-//         card.style.top = topCell.offsetTop +  offset + "px";
-
-//         let offsetLeft = stockCell.offsetLeft - card.offsetLeft;
-//         let offsetTop = stockCell.offsetTop - card.offsetTop;
-
-//         card.style.transition = `all ${duration}s ${delay}s linear, opacity 0s linear`;
-//         card.style.opacity = 1;
-//         card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
-//     }
-
-//     return delay;
-// }
 
 const setCardsSize = () => {
 
@@ -226,6 +259,44 @@ const setTable = () => {
     }, 500);
 }
 
+const drawCard = (card) => {
+
+    disableCard(card);
+
+    card.addEventListener('transitionend', enableCard); 
+
+    let wasteCell = document.querySelector(".waste");
+    let offsetLeft = wasteCell.offsetLeft - card.offsetLeft;
+    let offsetTop = wasteCell.offsetTop - card.offsetTop;
+
+    card.style.zIndex = zIndex();
+    card.querySelector(".card").classList.add("zoom");
+    card.classList.add("waste");
+    card.classList.toggle("flip");
+    card.style.transition = `all 0.5s ease-in-out`;
+    card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+    // if (lost()) setTimeout(gameOver, 600);
+}
+
+const move = (e) => {
+
+    let card = e.currentTarget;
+    let cards = [...document.querySelectorAll(".card-wrap")];
+    let cardNumber = cards.indexOf(card);
+
+    console.log(cardNumber, deckSize - fieldSize);
+
+    if (!card.classList.contains("flip") && cardNumber >= fieldSize) {
+        drawCard(card);        
+        return;
+    }
+
+    // if (!cardOpen(card)) return;
+        
+    // if (!makeMove(card)) zoom(card);
+}
+
 const enableCard = (card) => {
 
     card = card.currentTarget ? card.currentTarget : card;
@@ -284,7 +355,7 @@ const init = () => {
 
     setTable();
 
-    // setTimeout(enableCards, 3700);    
+    setTimeout(enableCards, 3700);    
 }
 
 window.onload = () => document.fonts.ready.then(() => init());
