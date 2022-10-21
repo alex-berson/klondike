@@ -256,7 +256,75 @@ const setTable = () => {
         delay = fillStock(topCell, cards, offset, delay, interval, duration);
         delay = fillField(topCell, cards, offset, delay, interval, duration);
 
+        setTimeout(() => {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.style.opacity = 1;
+            })
+        }, 2500);
+
     }, 500);
+}
+
+const removeStyle = (e) => {
+
+    let card = e.currentTarget;
+
+    card.removeEventListener('transitionend', removeStyle); 
+    card.firstElementChild.firstElementChild.removeAttribute("style");
+    card.firstElementChild.lastElementChild.removeAttribute("style");
+    card.classList.remove("waste");
+}
+
+const reverseStock = () => {
+    
+    disableCards();
+    disableReverse();
+
+    let interval = 0.05;
+    let duration = 0.5;
+    let delay = 0;
+    let n = 0;
+    let cards = document.querySelectorAll('.card-wrap');
+    let stockCell = document.querySelector(".stock");
+
+    for (let i = fieldSize; i < deckSize; i++) {
+
+        let card = cards[i];
+
+        if (!cards[i].classList.contains("waste")) continue;
+
+        n++;
+
+        card.addEventListener('transitionend', removeStyle); 
+
+        let offsetLeft = stockCell.offsetLeft - card.offsetLeft;
+        let offsetTop = stockCell.offsetTop - card.offsetTop;
+
+        card.style.zIndex = 0;
+
+        delay += interval;
+
+        card.querySelectorAll(".front, .back").forEach(card => {
+            card.style.transition = `all ${duration}s ${delay}s ease-in-out`;
+        });
+
+        card.style.transition = `all ${duration}s ${delay}s ease-in-out`;
+        card.classList.toggle("flip");
+        card.style.transform = `translate(${offsetLeft + 2}px, ${offsetTop}px)`;
+    }
+
+    setTimeout(enableCards, n * 50 + 500);
+} 
+
+const lastCard = () => {
+
+    let cards = document.querySelectorAll(".card-wrap");
+
+    for (let i = fieldSize; i < deckSize; i++) {
+        if (!cards[i].classList.contains("waste")) return false;
+    }
+
+    return true;
 }
 
 const drawCard = (card) => {
@@ -275,6 +343,8 @@ const drawCard = (card) => {
     card.classList.toggle("flip");
     card.style.transition = `all 0.5s ease-in-out`;
     card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+    if (lastCard()) setTimeout(enableReverse, 500);
 
     // if (lost()) setTimeout(gameOver, 600);
 }
@@ -297,6 +367,22 @@ const move = (e) => {
     // if (!makeMove(card)) zoom(card);
 }
 
+const enableReverse = () => {
+    if (touchScreen()) {
+        document.querySelector('.stock').addEventListener("touchstart", reverseStock);
+    } else {
+        document.querySelector('.stock').addEventListener("mousedown", reverseStock);
+    }
+} 
+
+const disableReverse = () => {
+    if (touchScreen()) {
+        document.querySelector('.stock').removeEventListener("touchstart", reverseStock);
+    } else {
+        document.querySelector('.stock').removeEventListener("mousedown", reverseStock);
+    }
+} 
+
 const enableCard = (card) => {
 
     card = card.currentTarget ? card.currentTarget : card;
@@ -304,7 +390,7 @@ const enableCard = (card) => {
     card.removeEventListener('transitionend', enableCard); 
     card.firstElementChild.classList.remove("zoom");
     
-    if (touchScreen()){
+    if (touchScreen()) {
         card.addEventListener("touchstart", move);
         card.addEventListener("touchend", removeZoom);
         card.addEventListener("touchcancel", removeZoom);
@@ -315,7 +401,8 @@ const enableCard = (card) => {
     }
 }
 
-const enableCards = () => {
+const enableCards = () => {    
+
     for (let card of document.querySelectorAll('.card-wrap')){
         enableCard(card);
     }

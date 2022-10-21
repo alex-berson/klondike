@@ -93,6 +93,8 @@ body:hover {
     border: 1px solid var(--table-color);
     border-radius: 4px;
     /* background-color: darkgreen; */
+    transition: opacity 2s ease;
+    opacity: 0;
 }
 
 .foundation, .stock {
@@ -151,7 +153,7 @@ body:hover {
     display: none;
 }
 
-.card-wrap:hover {
+.card-wrap:hover, .stock {
     cursor: pointer;
 }
 
@@ -280,9 +282,9 @@ img {
 
     }
 
-    .table {
-        /* margin-top: 50px; */
-    }
+    /* .table {
+        margin-top: 50px;
+    } */
 
     .row:not(:nth-child(1)):not(:nth-child(2))  {
         margin-top: calc(var(--card-height) / 3 * 2 * -1);
@@ -328,7 +330,7 @@ img {
     }
 
     .main img {
-        margin-top: calc(var(--card-width) * 0.00);;
+        margin-top: calc(var(--card-width) * 0.00);
         width: calc(var(--card-width) * 0.75);
         height: calc(var(--card-width) * 0.75);
     }
@@ -339,7 +341,7 @@ img {
 
     @media (orientation: landscape) {
 
-        .table{
+        .table {
             margin-top: 30px;
         }
     }
