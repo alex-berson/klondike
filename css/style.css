@@ -97,11 +97,11 @@ body:hover {
     opacity: 0;
 }
 
-.foundation, .stock {
+.foundation, .stock.cell {
     position: relative; 
 }
 
-.foundation:after, .stock:after {
+.foundation:after, .stock.cell:after {
     content: 'A';
     display: grid;
     place-items: center;
@@ -117,7 +117,7 @@ body:hover {
     left: -1px;
 }
 
-.stock:after {
+.stock.cell:after {
     content: '⭘';
     /* font-size: 8vmin; */
     /* font-weight: bold; */
