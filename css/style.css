@@ -288,6 +288,8 @@ img {
 
     .row:not(:nth-child(1)):not(:nth-child(2))  {
         margin-top: calc(var(--card-height) / 3 * 2 * -1);
+        /* margin-top: calc(var(--card-height) / 15 * 14 * -1); */
+
     }
 
     .front {
