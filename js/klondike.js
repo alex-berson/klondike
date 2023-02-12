@@ -7,6 +7,11 @@ const suit = {
     '♣': 'club'
 } 
 
+let timer;
+let movesAI;
+
+// let moves = [13,25,27,26,0,51,50,50,7,22,19,1,15,49,49,23,18,14,9,3,48,47,47,8,2,24,21,46,45,44,44,43,43,42,41,40,40,39,39,38,37,36,36,20,10,4,21,16,37,35,35,34,34,33,33,32,32,31,31,30,30,25,34,27,10,23,16,49,38,22,41,29,29,28,28,18,1,15,20,36,0,32,24,11,2,42,35,5,45,39,46,48,51,40,3,17,19,7,8,50,47,12,6,9];
+
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
 const zIndex = () => {
@@ -41,18 +46,55 @@ const safari = () => {
     return sfri ? true : false;
 }
 
-const zoom = (card) => {
+const shake = (card) => {
 
-    let zoomCards = [card];
-    let col = card.dataset.col;
-    let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+    let shakeCards = [card];
+    // let col = card.dataset.col;
+    // let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+    // let cards =  document.querySelectorAll('waste');
 
-    for (let i = 0; i < cards.length; i++) {
-        if (parseInt(cards[i].style.zIndex) > parseInt(card.style.zIndex)) zoomCards.push(cards[i]);
+    // console.log(cards.length);
+
+    if (card.classList.contains('waste')) {
+
+        let cards =  document.querySelectorAll('.waste:not(.cell)');
+
+        for (let i = 0; i < cards.length; i++) {
+            if (parseInt(cards[i].style.zIndex) < parseInt(card.style.zIndex)) shakeCards.push(cards[i]);
+        }
+
+    } else if (card.hasAttribute('data-f')) {
+
+        let foundation = card.dataset.f;
+        let cards =  document.querySelectorAll(`[data-f="${foundation}"]`);
+
+        for (let i = 0; i < cards.length; i++) {
+            if (parseInt(cards[i].style.zIndex) < parseInt(card.style.zIndex)) shakeCards.push(cards[i]);
+        }
+
+    } else {
+
+        let col = card.dataset.col;
+        let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+    
+        for (let i = 0; i < cards.length; i++) {
+            if (parseInt(cards[i].style.zIndex) > parseInt(card.style.zIndex)) shakeCards.push(cards[i]);
+        }
     }
 
-    zoomCards.forEach(card => card.style.transition = 'transform 0.25s linear');
-    zoomCards.forEach(card => card.style.transform += "scale(1.1)");
+    shakeCards.forEach(card => card.firstElementChild.addEventListener('animationend', (e) => {
+
+        let card = e.currentTarget;
+
+        card.classList.remove("shake");
+
+    }, {once: true})); 
+    
+    
+    // zoomCards.forEach(card => card.firstElementChild.firstElementChild.style.transition = 'transform 0.25s linear');
+    // zoomCards.forEach(card => card.firstElementChild.firstElementChild.style.transform = "scale(1.1)");
+    shakeCards.forEach(card => card.firstElementChild.classList.add("shake"));
+
 }
 
 const removeZoom = (e) => {
@@ -66,9 +108,10 @@ const removeZoom = (e) => {
         if (parseInt(cards[i].style.zIndex) > parseInt(card.style.zIndex)) zoomCards.push(cards[i]);
     }
 
-    zoomCards.forEach(card =>  card.style.transform = card.style.transform.replace("scale(1.1)", ""));
+    // zoomCards.forEach(card => card.firstElementChild.classList.remove("zoom"));
+    // zoomCards.forEach(card =>  card.firstElementChild.firstElementChild.style.transform = card.firstElementChild.style.transform.replace("scale(1.1)", ""));
 
-    // card.style.transform = card.style.transform.replace("scale(1.1)", "");
+    // card.firstElementChild.style.transform = card.firstElementChild.style.transform.replace("scale(1.1)", "");
 }
 
 const rankValue = (rank) => {
@@ -134,7 +177,10 @@ const fillField = (topCell, cards, offset, delay, interval, duration) => {
             card.classList.toggle('flip');
         }
 
-        card.style.zIndex = index + 1;
+        // card.style.zIndex = index + 1;
+
+        card.style.zIndex = Math.pow(2, index + 1);
+
 
 
         // card.classList.add(`c${i - opened[index] + index + 1}`);
@@ -199,13 +245,60 @@ const setCardsSize = () => {
     }
 }
 
+// const getDeck = () => {
+
+//     let deck = [];
+//     let ranks = decks[Math.floor(Math.random() * decks.length)];
+//     let suits = ['♥','♠','♦','♣'];
+
+//     ranks.forEach(rank => {
+
+//         switch(rank) {
+//             case 11:
+//                 rank = 'J';
+//                 break;
+//             case 12:
+//                 rank = 'Q';
+//                 break;
+//             case 13:
+//                 rank = 'K';
+//                 break;
+//             case 1:
+//                 rank = 'A';
+//                 break;
+//             default:
+//                 rank = String(rank);
+//         }
+
+//         shuffle(suits);
+
+//         for (let suit of suits) {
+
+//             let card = rank + suit;
+
+//             if (!deck.includes(card)) {
+//                 deck.push(card);
+//                 break;
+//             }
+//         }
+//     });
+
+//     return deck;
+// }
+
 const getDeck = () => {
-
-    let deck = [];
-    let ranks = decks[Math.floor(Math.random() * decks.length)];
+    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let suits = ['♥','♠','♦','♣'];
+    let n = Math.trunc(Math.random() * decks.length);
+    // n = 80;
+    let encDeck = decks[n];
+    // encDeck = 'gYomEzutsyNkqABfSlUpZIVOnGDJQbCPjFKvcMRhiXrLHdWxaTwe';
+    let deck = [];
 
-    ranks.forEach(rank => {
+    for (let char of encDeck) {
+
+        let rank = Math.trunc(abc.indexOf(char) / 4) + 1;
+        let suit = suits[abc.indexOf(char) % 4];
 
         switch(rank) {
             case 11:
@@ -224,45 +317,59 @@ const getDeck = () => {
                 rank = String(rank);
         }
 
-        shuffle(suits);
+        deck.push(rank + suit);
+    }
 
-        for (let suit of suits) {
+    // console.log(deck);
 
-            let card = rank + suit;
-
-            if (!deck.includes(card)) {
-                deck.push(card);
-                break;
-            }
-        }
-    });
-
-    // deck[0] = 'A♠';
-    // // deck[0] = 'K♥';
-    // deck[27] = 'K♥';
-    // deck[51] = 'Q♠';
-    // deck[50] = 'J♥';
-    // deck[49] = '10♠';
-    // deck[48] = '9♥';
-    // deck[47] = '8♠';
-    // deck[46] = '7♥';
-    // deck[45] = '6♠';
-    // deck[44] = '5♥';
-    // deck[43] = '4♠';
-    // deck[42] = '3♥';
-    // deck[41] = '2♠';
-    // deck[40] = 'A♥';
-
-    // deck[26] = 'J♥';
+    // console.log(n);
 
     return deck;
 }
+
+const encriptDeck = () => {
+    
+    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let cards = document.querySelectorAll('.card-wrap');
+    let encDeck = '';
+
+    for (let card of cards) {
+
+        let rank = Number(card.dataset.rank);
+        let suit = card.dataset.suit;
+
+        switch(suit) {
+            case '♥':
+                suit = 1;
+                break;
+            case '♠':
+                suit = 2;
+                break;
+            case '♦':
+                suit = 3;
+                break;
+            case '♣':
+                suit = 4;
+                break;
+        }
+        console.log(rank, suit);
+
+        let char = abc[(rank - 1) * 4 + suit - 1];
+
+        encDeck = encDeck + char;
+    }
+
+    // console.log(encDeck);
+
+    return encDeck;
+}
+
 
 const setCards = () => {
 
     let cards = document.querySelectorAll('.front');
 
-    deck = getDeck();
+    let deck = getDeck();
 
     for (let i = 0; i < deckSize; i++){
 
@@ -434,20 +541,47 @@ const drawCard = (card) => {
     // if (lost()) setTimeout(gameOver, 600);
 }
 
+// const colOrder = (card, n) => {
+
+//     let order = Array.from({length: n}, (_, i) => i + 1);
+
+//     let m = card.dataset.col ? card.dataset.col : card.dataset.f
+
+//     // console.log(card.dataset.col);
+
+//     for (let i = 1; i < Number(m); i++) {
+//         order.push(order.shift());
+//     }
+
+//     return order;
+// }
+
 const checkFoundations = (card) => {
 
     // let rank = parseInt(card.dataset.rank);
     // let suit = card.dataset.suit;
 
+    const colOrder = () => {
+
+        let order = [1,2,3,4];
+
+        for (let i = 1; i < Number(card.dataset.f); i++) {
+            order.push(order.shift());
+        }
+
+        return order;
+    }
+
     if (!openCard(card)) return null;
 
-    for (let n = 1; n <= 4; n++) {
+    for (let n of colOrder()) {
+
+    // for (let n = 1; n <= 4; n++) {
 
         let topIndex = 0;
         let rank = 0, suit;
 
         let cards =  document.querySelectorAll(`[data-f="${n}"]`);
-
 
         for (let card of cards) {
             if (parseInt(card.style.zIndex) > topIndex) [topIndex, rank, suit] = [parseInt(card.style.zIndex), parseInt(card.dataset.rank), card.dataset.suit];
@@ -457,7 +591,7 @@ const checkFoundations = (card) => {
 
         if (rank == 0 && parseInt(card.dataset.rank) == 1) return {n, zIndex: 0};
 
-        if (parseInt(card.dataset.rank) - rank == 1 && suit == card.dataset.suit) return {n, zIndex: topIndex};
+        if (parseInt(card.dataset.rank) - rank == 1 && suit == card.dataset.suit) return {n, zIndex: cards.length};
     }
 
     return null;
@@ -468,9 +602,22 @@ const checkColumns = (card) => {
     // let rank = parseInt(card.dataset.rank);
     // let suit = card.dataset.suit;
 
-    // if (!openCard(card)) return null; 
+    // if (!openCard(card)) return null;
+    
+    const colOrder = () => {
 
-    for (let n = 1; n <= 7; n++) {
+        let order = [1,2,3,4,5,6,7];
+
+        for (let i = 1; i < Number(card.dataset.col); i++) {
+            order.push(order.shift());
+        }
+
+        return order;
+    }
+
+
+    for (let n of colOrder()) {
+    // for (let n = 1; n <= 7; n++) {
 
         // let topIndex = 0;
 
@@ -486,6 +633,9 @@ const checkColumns = (card) => {
         // let topCard = topFoundation(i);
 
         if (!topCard && parseInt(card.dataset.rank) != 13) continue;
+        // if (!topCard && parseInt(card.dataset.rank) == 13 && parseInt(card.style.zIndex) == 2) continue;
+
+        // if (parseInt(card.dataset.rank) == 13) console.log(card.style.zIndex);
 
         if ((!topCard && parseInt(card.dataset.rank) == 13) || 
              (parseInt(card.dataset.rank) - parseInt(topCard.dataset.rank) == -1 && 
@@ -513,6 +663,12 @@ const openCard = (card) => {
 
 const moveToFounation = (card, n, zIndex) => {
 
+    let cards =  document.querySelectorAll(`[data-f="${n}"]`);
+
+    for (let card of cards) {
+        disableCard(card);
+    }
+
     disableCard(card);
 
     // console.log(zIndex);
@@ -520,10 +676,17 @@ const moveToFounation = (card, n, zIndex) => {
     card.addEventListener('transitionend', (e) => {
 
         let card = e.currentTarget;
+
+        // card.style.zIndex = Math.pow(2, Number(card.dataset.rank));
          
         card.style.zIndex = zIndex + 1;
         enableCard(card);
-    }); 
+
+        for (let card of cards) {
+            enableCard(card);
+        }
+
+    }, {once: true}); 
 
 
     // card.addEventListener('transitionend', enableCard); 
@@ -539,7 +702,12 @@ const moveToFounation = (card, n, zIndex) => {
     // let offsetLeft = foundationCell.offsetLeft - card.offsetLeft;
     // let offsetTop = foundationCell.offsetTop - card.offsetTop;
 
-    card.style.zIndex = parseInt(card.style.zIndex) + 100;
+    // card.style.zIndex = parseInt(card.style.zIndex) + 100;
+
+    // card.style.zIndex = Number(card.dataset.rank) * 10000000;
+    card.style.zIndex = Math.pow(2, Number(card.dataset.rank) + 10);
+
+
     card.querySelector(".card").classList.add("zoom");
     card.dataset.f = n;
     card.classList.remove('waste');
@@ -556,15 +724,24 @@ const moveToColumn = (card, n0, n, topCard) => {
     let moveCards = [card];
     let col = card.dataset.col;
     let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+    let cards2 =  document.querySelectorAll(`[data-col="${n}"]`);
+    let topColCards = document.querySelectorAll(`[data-col="${n}"]`);
+    let nCards = 0;
 
     for (let i = 0; i < cards.length; i++) {
         if (parseInt(cards[i].style.zIndex) > parseInt(card.style.zIndex)) moveCards.push(cards[i]);
     }
 
-    // let zIndex = topCard == undefined ? 0 : parseInt(topCard.style.zIndex);
-    let zIndex = topCard ? parseInt(topCard.style.zIndex) : 0;
+    for (let card of cards2) {
+        disableCard(card);
+    }
 
-    let baseIndex = parseInt(moveCards[0].style.zIndex);
+    // let zIndex = topCard == undefined ? 0 : parseInt(topCard.style.zIndex);
+    // let zIndex = topCard ? parseInt(topCard.style.zIndex) : 0;
+
+    let zIndex = topCard ? topColCards.length : 0;
+
+    let baseIndex = Math.log2(Number(moveCards[0].style.zIndex));
 
     // console.log(moveCards, moveCards[0]);
     
@@ -574,9 +751,16 @@ const moveToColumn = (card, n0, n, topCard) => {
 
     moveCards.forEach(card => {
 
+        card.style.transform = card.style.transform.replace("scale(1.1)", "");
+
+        console.log(card);
+
         let offsetPlus;
 
-        let i = parseInt(card.style.zIndex) -  baseIndex;
+        // let i = Number(card.style.zIndex) -  baseIndex;
+
+        let i = Math.log2(Number(card.style.zIndex)) -  baseIndex;
+
         
         disableCard(card);
 
@@ -584,11 +768,30 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             let card = e.currentTarget;
              
-            card.style.zIndex = zIndex + 1 + i;
-            enableCard(card);
+            // card.style.zIndex = zIndex + 1 + i;
+
+            card.style.zIndex = Math.pow(2, zIndex + 1 + i);
+
+            console.log(Math.pow(2, zIndex + 1 + i));
+
+
+            // card.style.zIndex = 20 - Number(card.dataset.rank);
+
+            setTimeout(() => {
+                enableCard(card);
+
+                for (let card of cards2) {
+                    enableCard(card);
+                }
+            }, 0);
+
+
+            nCards++;
+
+            if (moveCards.length == nCards) compressCards();
 
             // card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - 20}px)`;
-        }); 
+        }, {once: true}); 
 
         let coef = screen.width > 460 && screen.height > 460 ? 3 : 2.5;
         // let coef = screen.width > 460 && screen.height > 460 ? 5 : 2.5;
@@ -633,7 +836,9 @@ const moveToColumn = (card, n0, n, topCard) => {
         // console.log(offsetLeft, offsetLeft2, offsetTop, offsetTop2);
 
     
-        card.style.zIndex = parseInt(card.style.zIndex) + 100;
+        card.style.zIndex = parseInt(card.style.zIndex) + 1000000;
+        // card.style.zIndex = 20 - Number(card.dataset.rank) + 10000;
+
         card.querySelector(".card").classList.add("zoom");
         card.dataset.col = n;
         card.classList.remove('waste');
@@ -643,7 +848,9 @@ const moveToColumn = (card, n0, n, topCard) => {
         card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
     });
 
-    setTimeout(() => {
+    const compressCards = () => {
+
+    // setTimeout(() => {
 
         // let col
         // let cards =  document.querySelectorAll(`[data-col="${col}"]`);
@@ -682,8 +889,10 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             for (let j = 0; j < cards.length; j++) {
                 // console.log(parseInt(cards[j].style.zIndex));
-                if (parseInt(cards[j].style.zIndex) == i + 1) card = cards[j];
-                if (parseInt(cards[j].style.zIndex) == i) previousCard = cards[j];
+                // if (parseInt(cards[j].style.zIndex) == i + 1) card = cards[j];
+                // if (parseInt(cards[j].style.zIndex) == i) previousCard = cards[j];
+                if (parseInt(Math.log2(cards[j].style.zIndex)) == i + 1) card = cards[j];
+                if (parseInt(Math.log2(cards[j].style.zIndex)) == i) previousCard = cards[j];
             }
 
             if (i == 1) gap = card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top;
@@ -745,7 +954,9 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             // offset = card.classList.contains('flip') ? Math.ceil(offset / closedCards.length) * closedCards.length : Math.ceil(offset / closedCards.length) * (parseInt(card.style.zIndex) - 1);
 
-            offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+            // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+            offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
+
 
 
             // offset = card.classList.contains('flip') ? Math.ceil(offset / closedCards.length) * closedCards.length : Math.ceil(offset / closedCards.length) * 1;
@@ -760,7 +971,8 @@ const moveToColumn = (card, n0, n, topCard) => {
             card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - offset}px)`;
             
         }
-    }, 550);
+    }
+    // }, 550);
     
     return true;
 }
@@ -775,7 +987,7 @@ const reverseNextCard = (col) => {
     if (cards.length == 0) return;
 
     for (let card of cards) {
-        if (parseInt(card.style.zIndex) > zIndex) [zIndex, topCard] = [parseInt(card.style.zIndex), card];
+        if (Number(card.style.zIndex) > zIndex) [zIndex, topCard] = [Number(card.style.zIndex), card];
     }
 
     setTimeout(() => {
@@ -799,8 +1011,10 @@ const reverseNextCard = (col) => {
             let card, previousCard
 
             for (let j = 0; j < cards.length; j++) {
-                if (parseInt(cards[j].style.zIndex) == i + 1) card = cards[j];
-                if (parseInt(cards[j].style.zIndex) == i) previousCard = cards[j];
+                // if (Number(cards[j].style.zIndex) == i + 1) card = cards[j];
+                // if (Number(cards[j].style.zIndex) == i) previousCard = cards[j];
+                if (Math.log2(Number(cards[j].style.zIndex)) == i + 1) card = cards[j];
+                if (Math.log2(Number(cards[j].style.zIndex)) == i) previousCard = cards[j];
             }
 
             if (i == 1) gap = card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top;
@@ -841,11 +1055,14 @@ const reverseNextCard = (col) => {
 
             if (gap - cellGap > Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length)) {
 
-                offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (parseInt(card.style.zIndex) - 1));
-            
+                // offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (parseInt(card.style.zIndex) - 1));
+                offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (Math.log2(parseInt(card.style.zIndex)) - 1));
+
             } else {
 
-                offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+                // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+                offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
+
             }
 
             card.style.transition = `all 0.3s 0.0s linear`;
@@ -867,16 +1084,59 @@ const reverseNextCard = (col) => {
     // console.log(topCard);
 }
 
+const nextMove = () => {
+
+    let cards = document.querySelectorAll(".card-wrap");
+
+    // window.addEventListener('blur', () => {
+        
+    //     if (aiMode()) clearTimeout(timer);
+    
+    //     console.log("blur");
+
+    //     window.addEventListener('focus', () => {
+    //         if (aiMode()) nextMove();
+    //         console.log("focus");
+    //     }, {once: true}, false);
+
+    // }, {once: true}, false);
+
+    if (movesAI.length == 0) {
+        setTimeout(clearBoard, 2000);
+        setTimeout(init, 3000);
+        return;
+    }
+
+    timer = setTimeout(() => turn(cards[movesAI.shift()]), 1000);
+}
+
 const turn = (e) => {
 
-    let card = e.currentTarget;
+
+    if (document.hidden) {
+        console.log("hidden");
+        return;
+    }
+
+    let card = e.currentTarget ? e.currentTarget : e;
+
+    // let card = e.currentTarget;
     let cards = [...document.querySelectorAll(".card-wrap")];
     let cardNumber = cards.indexOf(card);
+
+    // console.log(e.isTrusted);
+
+    if (aiMode() && e.isTrusted) return;
 
     // console.log(cardNumber, deckSize - fieldSize);
 
     if (!card.classList.contains("flip") && cardNumber >= fieldSize) {
-        drawCard(card);        
+        drawCard(card);     
+        
+        if (aiMode()) nextMove();
+
+        // if (aiMode()) setTimeout(() => turn(cards[moves.shift()], moves), 1000);
+
         return;
     }
 
@@ -896,7 +1156,7 @@ const turn = (e) => {
 
         // console.log(topCell.offsetTop, rect.top);
 
-        zoom(card);
+        // zoom(card);
 
         // let rect = card.getBoundingClientRect();
 
@@ -915,6 +1175,10 @@ const turn = (e) => {
 
             if (col) reverseNextCard(col);
 
+            if (aiMode()) nextMove();
+
+            // if (aiMode()) setTimeout(() => turn(cards[moves.shift()], moves), 1000);
+
             return;
         }
 
@@ -929,8 +1193,17 @@ const turn = (e) => {
             moveToColumn(card, col, column.n, column.card);
 
             if (col) reverseNextCard(col);
+
+            if (aiMode()) nextMove();
+
+            return;
         }
+
+        shake(card);
     }
+
+    // if (aiMode()) nextMove();
+    // if (aiMode()) setTimeout(() => turn(cards[moves.shift()], moves), 1000);
 }
 
 const enableReverseButton = () => {
@@ -992,7 +1265,128 @@ const disableTapZoom = () => {
     document.body.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
+const clearBoard = () => {
+
+    let cards = document.querySelectorAll(".card-wrap");
+
+    for (let card of cards) {
+
+        card.removeAttribute('style');
+        card.classList.remove('flip');
+
+        card.firstElementChild.firstElementChild.removeAttribute('style');
+        card.firstElementChild.firstElementChild.classList.remove('red');
+        card.firstElementChild.lastElementChild.removeAttribute('style');
+
+        Object.keys(card.dataset).forEach(dataKey => delete card.dataset[dataKey]);
+    }
+}
+
+const aiPlay = () => {
+
+    let event = new Event('mousedown');
+    let cards = document.querySelectorAll(".card-wrap");
+    let encDeck = encriptDeck();
+    movesAI = getMoves(encDeck);
+    console.log(encDeck);
+
+    console.log(moves);
+
+    const play = () => {
+
+            if (movesAI.length == 0) {
+
+                clearInterval(interval);
+
+                setTimeout(clearBoard, 2000);
+
+                setTimeout(init, 3000);
+
+                return;
+            }
+
+            let move = movesAI.shift();
+
+            // console.log(move);
+
+            cards[move].dispatchEvent(event);
+    }
+
+    let move = moves.shift();
+    turn(cards[move]);
+
+    // let interval = setInterval(play, 700);
+}
+
+// const newGame = () => {
+
+//     disableTapZoom();
+
+//     // disableCards();
+
+//     setTable();
+
+//     // encriptDeck(); //
+
+//     setTimeout(enableCards, 3700);  
+
+//     console.log(document.querySelectorAll(".card-wrap"));
+    
+//     // setTimeout(aiPlay, 4000);  
+// }
+
+const aiMode = () => {
+
+    let queryString = window.location.search;
+    let urlParams = new URLSearchParams(queryString);
+    let mode = urlParams.get('mode');
+    
+    return mode == 'ai';
+
+    return true; //
+}
+
 const init = () => {
+
+    window.addEventListener('blur', () => {
+            if (aiMode()) clearTimeout(timer);
+            
+        console.log("blur");
+
+        window.addEventListener('focus', () => {
+    
+            if (aiMode()) nextMove();
+            console.log("focus");
+        }, {once: true});
+
+    });
+
+//    window.addEventListener('blur', () => {
+//             if (aiMode()) clearTimeout(timer);
+            
+//         console.log("blur");
+
+//     }, false);
+
+//     window.addEventListener('focus', () => {
+    
+//         if (aiMode()) nextMove();
+//         console.log("focus");
+//     }, false);
+
+
+
+    document.addEventListener("visibilitychange", () => {
+        console.log("visibilitychange");
+    }, false);
+
+    window.addEventListener("pagehide", () => {
+        console.log("pagehide");
+    }, false);
+
+    window.addEventListener('beforeunload', () => {
+        console.log("beforeunload");
+    });
 
     disableTapZoom();
 
@@ -1000,7 +1394,18 @@ const init = () => {
 
     setTable();
 
-    setTimeout(enableCards, 3700);    
+    // encriptDeck(); //
+
+    setTimeout(enableCards, 3700);  
+
+
+    if (aiMode()) setTimeout(aiPlay, 4500);
+
+    // setTimeout(aiPlay, 4500);
+
+    // setTimeout(enableCards, 3700);  
+    
+    // setTimeout(aiPlay, 4000);  
 }
 
 window.onload = () => document.fonts.ready.then(init);
