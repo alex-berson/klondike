@@ -58,22 +58,35 @@ const encriptDeckAI = () => {
     return encDeck;
 }
 
-
 const setTableau = () => {
 
-    deckCopy = [...deck];
+    stock = [...deck];
 
     for (let i = 0; i < 7; i++) {
         for (let j = i; j < 7; j++) {
 
-            let card = deckCopy.shift();
-            if (i == j) card.open = true;
+            let card = stock.pop();
+            if (j == i) card.open = true;
             tableau[j].push(card);
         }
     }
-
-    stock = [...deckCopy];
 }
+
+// const setTableau = () => {
+
+//     deckCopy = [...deck];
+
+//     for (let i = 0; i < 7; i++) {
+//         for (let j = i; j < 7; j++) {
+
+//             let card = deckCopy.shift();
+//             if (i == j) card.open = true;
+//             tableau[j].push(card);
+//         }
+//     }
+
+//     stock = [...deckCopy];
+// }
 
 const checkLast = () => {
 
@@ -81,9 +94,10 @@ const checkLast = () => {
 
    for (let i = 0; i < 7; i++) {
 
+
         if (tableau[i].length == 0) continue;
 
-        let card1 = tableau[i][tableau[i].length -1];
+        let card1 = tableau[i][tableau[i].length - 1];
 
         for (let j = 0; j < 4; j++) {
             if (foundations[j].length == 0) {
@@ -104,6 +118,10 @@ const checkLast = () => {
             let card2 = foundations[j][foundations[j].length - 1];
 
             if (card1.suit == card2.suit && card1.val - card2.val == 1) {
+
+                // if (Number(card1.val) == 9 && Number(card1.suit) == 1) {
+                //     console.log(tableau.map(arr => arr.slice()));
+                // }
 
                 saveMove(card1);
 
@@ -164,7 +182,7 @@ const checkFirst = () => {
 
 }
 
-const ckeckWaist = () => {
+const ckeckWaste = () => {
 
     // console.log("CHECKWAIST");
 
@@ -267,7 +285,7 @@ const play = () => {
 
         if (checkLast()) continue;
         if (checkFirst()) continue;
-        if (ckeckWaist()) continue;
+        if (ckeckWaste()) continue;
 
         break;
     }

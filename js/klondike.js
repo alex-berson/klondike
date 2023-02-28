@@ -1,5 +1,6 @@
 const fieldSize = 28;
 const deckSize = 52;
+let reverses = 2;
 const suit = {
     '♥': 'heart',
     '♦': 'diamond',
@@ -14,6 +15,22 @@ let movesAI;
 
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
+const showBoard = () => {
+    document.body.style.opacity = 1;
+
+    // document.querySelector('.table').style.opacity = 1;
+
+    // document.body.addEventListener('transitionend', (e) => {
+
+    //     let el = e.currentTarget;
+
+    //     el.style.transition = 'all 0s';
+       
+    // }, {once: true}); 
+
+
+}
+
 const zIndex = () => {
 
     let zIndex = 0;
@@ -24,6 +41,9 @@ const zIndex = () => {
     }
 
     return zIndex == 0 ?  1 : zIndex < 5 ? zIndex *= 3 : zIndex *= 2;
+
+    // return zIndex == 0 ?  1 : zIndex += 1;
+
 }
 
 const shuffle = (array) => {
@@ -33,18 +53,18 @@ const shuffle = (array) => {
     }
 }
 
-const safari = () => {
+const safari = () => /safari/.test(window.navigator.userAgent.toLowerCase());
 
-    let userAgent = window.navigator.userAgent.toLowerCase(),
-    sfri = /safari/.test(userAgent),
-    ios = /iphone|ipod|ipad/.test(userAgent);
+    // let userAgent = window.navigator.userAgent.toLowerCase(),
+    // sfri = /safari/.test(userAgent),
+    // ios = /iphone|ipod|ipad/.test(userAgent);
 
     // console.log(userAgent);
 
     // if (sfri) alert("SFRI");
 
-    return sfri ? true : false;
-}
+    // return sfri ? true : false;
+// }
 
 const shake = (card) => {
 
@@ -177,10 +197,8 @@ const fillField = (topCell, cards, offset, delay, interval, duration) => {
             card.classList.toggle('flip');
         }
 
-        // card.style.zIndex = index + 1;
-
-        card.style.zIndex = Math.pow(2, index + 1);
-
+        card.style.zIndex = index + 1;
+        // card.style.zIndex = Math.pow(2, index + 1);
 
 
         // card.classList.add(`c${i - opened[index] + index + 1}`);
@@ -214,7 +232,7 @@ const fillStock = (topCell, cards, offset, delay, interval, duration) => {
         // let offsetTop = stockCell.offsetTop - card.offsetTop;
 
         card.style.left = topCell.getBoundingClientRect().left + 'px';
-        card.style.top = topCell.getBoundingClientRect().top +  offset + 'px';
+        card.style.top = topCell.getBoundingClientRect().top + offset + 'px';
 
         card.style.display = 'block';
         card.classList.add("stock");
@@ -286,13 +304,27 @@ const setCardsSize = () => {
 //     return deck;
 // }
 
+// const reorderDeck = (str) => {
+
+//     let firstChars = str.substr(0, 28);   
+//     let newStr = str.slice(28);
+//     let reversedChars = firstChars.split('').reverse().join('');
+//     let result = newStr.concat(reversedChars);
+  
+//     return result;
+// }
+
 const getDeck = () => {
     let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let suits = ['♥','♠','♦','♣'];
     let n = Math.trunc(Math.random() * decks.length);
-    // n = 80;
+   
+    // n = 29;
+
     let encDeck = decks[n];
-    // encDeck = 'gYomEzutsyNkqABfSlUpZIVOnGDJQbCPjFKvcMRhiXrLHdWxaTwe';
+
+    console.log('DECK: ', n)
+    // encDeck = 'ljvySbcmCfTariIgPuYKndNsHQqEtzWXRkowDLAUJZxVhBepGFOM';
     let deck = [];
 
     for (let char of encDeck) {
@@ -352,7 +384,8 @@ const encriptDeck = () => {
                 suit = 4;
                 break;
         }
-        console.log(rank, suit);
+
+        // console.log(rank, suit);
 
         let char = abc[(rank - 1) * 4 + suit - 1];
 
@@ -371,7 +404,9 @@ const setCards = () => {
 
     let deck = getDeck();
 
-    for (let i = 0; i < deckSize; i++){
+    // for (let i = 0; i < deckSize; i++){
+
+    for (let i = deckSize - 1; i >= 0; i--){
 
         let card = cards[i];
         let rank = deck[i].length == 2 ? deck[i][0] : deck[i][0] + deck[i][1];
@@ -381,6 +416,7 @@ const setCards = () => {
             card.classList.add('red');
             card.parentElement.parentElement.dataset.color = 'red'; 
         } else {
+            card.classList.remove('red');
             card.parentElement.parentElement.dataset.color = 'black'; 
         }
 
@@ -411,50 +447,219 @@ const setCards = () => {
     } 
 }
 
-const setTable = () => {
+const placeCards = () => {
 
-    setCardsSize();
-    setCards();
+    let stockCell = document.querySelector('.stock.cell');
+    let cards = document.querySelectorAll('.card-wrap');
 
-    let topCell = document.querySelectorAll('.cell')[3];
-    let cards =  document.querySelectorAll('.card-wrap');
+    for (let card of cards) {
 
-    setTimeout(() => {
+        card.style.left = stockCell.offsetLeft + 'px';
+        card.style.top = stockCell.offsetTop + 'px';
 
-        let offsetPlus = safari() ? 10 : 50;
-        // let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+        // console.log(stockCell.offsetLeft, stockCell.offsetTop);
 
-        let offset = window.innerHeight - topCell.parentNode.parentNode.getBoundingClientRect().top + offsetPlus;
+        // console.log(stockCell.getBoundingClientRect().left, stockCell.getBoundingClientRect().top)
+        // card.style.left = stockCell.getBoundingClientRect().left + 'px';
+        // card.style.top = stockCell.getBoundingClientRect().top  + 'px';
 
-        // console.log(window.innerHeight, topCell.parentNode.parentNode.offsetTop, topCell.parentNode.parentNode.getBoundingClientRect().top)
+        card.style.display = 'block';
+        card.classList.add("stock");
+
+        // card.style.opacity = 1;
+
+        // let offsetLeft = stockCell.offsetLeft - card.offsetLeft;
+        // let offsetTop = stockCell.offsetTop - card.offsetTop;
+
+        // card.style.left = stockCell.getBoundingClientRect().left + 'px';
+        // card.style.top = stockCell.getBoundingClientRect().top  + 'px';
+
+        // card.classList.add("stock");
+
+        let offsetLeft = stockCell.getBoundingClientRect().left - card.getBoundingClientRect().left;
+        let offsetTop = stockCell.getBoundingClientRect().top  - card.getBoundingClientRect().top ;
+
+        card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+        // card.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
+
+    }
+}
+
+const fillField2 = () => {
+
+    let zIndex = 0;
+    let index;
+    let delay = 1;
+    let interval = 0.1;
+    let duration = 0.5;
+    let openCards = [0, 7, 13, 18, 22, 25, 27];
+
+    // let openCards = [0, 2, 5, 9, 14, 20, 27];
+
+    let order = [0,1,7,2,8,13,3,9,14,18,4,10,15,19,22,5,11,16,20,23,25,6,12,17,21,24,26,27];
+
+    let stockCell = document.querySelector('.stock.cell');
+    let cellCell = document.querySelectorAll('.cell')[7];
+
+    // let dist =  Math.sqrt(Math.pow((cellCell.offsetLeft - stockCell.offsetLeft), 2) + Math.pow((cellCell.offsetTop - stockCell.offsetTop), 2));
+
+    let cards = [...document.querySelectorAll('.card-wrap')];
+
+    cards.reverse();
 
 
-        let delay = 0;
-        let interval = 0.05;
-        let duration = 0.5;
+    // for (let card of cards) {
+    //     card.style.zIndex = 0;
+    // }
 
-        delay = fillStock(topCell, cards, offset, delay, interval, duration);
-        delay = fillField(topCell, cards, offset, delay, interval, duration);
+    for (let i = 0; i < fieldSize; i++) {
+
+        delay += interval;
+
+        let card = cards[i];
+
+        let cell = document.querySelectorAll('.cell')[i + 7];
+        // let cell = document.querySelectorAll('.cell')[order[i] + 7];
+
+        // let offsetLeft = cell.offsetLeft - card.offsetLeft;
+        // let offsetTop = cell.offsetTop - card.offsetTop;
+
+
+        // duration = Math.sqrt(Math.pow(offsetLeft, 2) + Math.pow(offsetTop, 2)) * 0.5 / dist;
+
+        // console.log(offsetLeft, offsetTop, duration);
+
+
+        let offsetLeft = cell.getBoundingClientRect().left - card.getBoundingClientRect().left;
+        let offsetTop = cell.getBoundingClientRect().top - card.getBoundingClientRect().top;
+
+        card.querySelectorAll('.front, .back').forEach(card => {
+            card.style.transition = `all ${duration}s ${delay}s linear`;
+        });
+
+        // if (openCards.includes(i)) {
+        //     index = openCards.indexOf(i);
+        //     card.classList.toggle('flip');
+        // }
+
+        // card.style.zIndex = index + 1;
+
+        card.style.transition = `transform ${duration}s ${delay}s linear`;
+        // card.style.opacity = 1;
+        if (openCards.includes(i)) {
+            index = openCards.indexOf(i);
+            card.classList.toggle('flip');
+        }
+
+        // card.style.zIndex = index + 1;
+
 
         setTimeout(() => {
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.style.opacity = 1;
-            })
-        }, 2500);
+            // zIndex++;
+            if (card.classList.contains('flip')) zIndex++;
+            card.style.zIndex = zIndex;
 
-    }, 500);
+          }, (delay + 0.1) * 1000);
+
+        // card.style.zIndex = index + 1;
+
+
+        // card.classList.add(`c${i - opened[index] + index + 1}`);
+        card.dataset.col = i - openCards[index] + index + 1;
+        card.classList.remove('stock');
+
+        // console.log(i - opened[index] + index + 1);
+
+        // card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+        card.style.transform = `translate(${offsetLeft - 4}px, ${offsetTop}px)`;
+
+
+
+
+        // card.addEventListener('transitionstart', (e) => {
+
+        //     let card = e.currentTarget;
+    
+        //     card.style.zIndex = zIndex + 1;
+
+        //     console.log(zIndex);
+
+        //     // zIndex = openCards.includes(zIndex) ? 0 : zIndex + 1;
+
+        //     zIndex++
+
+        // }, {once: true}); 
+    }
 }
 
-const removeStyle = (e) => {
 
-    let card = e.currentTarget;
+const setTable = ({reset = true} = {}) => {
 
-    card.removeEventListener('transitionend', removeStyle); 
-    card.firstElementChild.firstElementChild.removeAttribute("style");
-    card.firstElementChild.lastElementChild.removeAttribute("style");
+    if (reset) {
+        setCards();
+    }
+
+    // setTimeout(() => {
+        // setCards();
+
+
+        // placeCards();
+
+        setTimeout(fillField2, 200);
+
+    // }, 1000);
+    // placeCards();
+
+    // setTimeout(fillField2, 200);
+
+    // let topCell = document.querySelectorAll('.cell')[3];
+    // let cards =  document.querySelectorAll('.card-wrap');
+
+    // setTimeout(() => {
+
+    //     let offsetPlus = safari() ? 10 : 50;
+    //     // let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+
+    //     let offset = window.innerHeight - topCell.parentNode.parentNode.getBoundingClientRect().top + offsetPlus;
+
+    //     // console.log(window.innerHeight, topCell.parentNode.parentNode.offsetTop, topCell.parentNode.parentNode.getBoundingClientRect().top)
+
+
+    //     let delay = 0;
+    //     let interval = 0.05;
+    //     let duration = 0.5;
+
+    //     // delay = fillStock(topCell, cards, offset, delay, interval, duration);
+    //     // delay = fillField(topCell, cards, offset, delay, interval, duration);
+
+    //     // delay = fillFoundations(topCell, cards, offset, delay, interval, duration);
+
+
+    //     setTimeout(() => {
+    //         document.querySelectorAll('.cell').forEach(cell => {
+    //             cell.style.opacity = 1;
+    //         })
+    //     }, 2500);
+
+    // }, 500);
 }
 
-const reverseStock = () => {
+// const removeStyle = (e) => {
+
+//     let card = e.currentTarget;
+
+//     card.removeEventListener('transitionend', removeStyle); 
+//     card.firstElementChild.firstElementChild.removeAttribute("style");
+//     card.firstElementChild.lastElementChild.removeAttribute("style");
+//     card.style.transition = '';
+//     card.style.zIndex = 'auto';
+// }
+
+const reverseStock = ({final = false} = {}) => {
+
+    if (document.querySelectorAll('.waste:not(.cell)').length == 0) return; 
     
     disableCards();
 
@@ -465,7 +670,9 @@ const reverseStock = () => {
     let cards = document.querySelectorAll('.card-wrap');
     let stockCell = document.querySelector(".stock.cell");
 
-    for (let i = fieldSize; i < deckSize; i++) {
+    // console.log("REVERSE");
+
+    for (let i = 0; i < deckSize - fieldSize; i++) {
 
         let card = cards[i];
 
@@ -476,7 +683,16 @@ const reverseStock = () => {
         card.classList.add("stock");
         card.classList.remove("waste");
 
-        card.addEventListener('transitionend', removeStyle); 
+        card.addEventListener('transitionend', (e) => {
+
+            let card = e.currentTarget;
+
+            card.firstElementChild.firstElementChild.removeAttribute("style");
+            card.firstElementChild.lastElementChild.removeAttribute("style");
+            card.style.transition = '';
+            card.style.zIndex = 'auto';
+
+        }, {once: true}); 
 
         let style = window.getComputedStyle(card);
         let matrix = new WebKitCSSMatrix(style.transform);
@@ -499,9 +715,48 @@ const reverseStock = () => {
         card.style.transition = `all ${duration}s ${delay}s ease-in-out`;
         card.classList.toggle("flip");
         card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+        // card.style.zIndex = 0;
+
+        // card.style.zIndex = 'auto';
+
+        // setTimeout(() => {
+        //     document.querySelector('.stock.cell').classList.remove('reverse');
+        //     document.querySelector('.stock.cell').classList.add('reload');
+        // }, )
+
+
     }
 
-    setTimeout(enableCards, n * 50 + 500);
+    if (!final) {
+                
+        setTimeout(() => {
+            reverses--;
+
+            switch (reverses) {
+                case 1: 
+                    document.querySelector('.stock.cell').classList.remove('reverse2');
+                    document.querySelector('.stock.cell').classList.add('reverse1');
+                    break;
+                case 0:
+                    document.querySelector('.stock.cell').classList.remove('reverse1');
+                    document.querySelector('.stock.cell').classList.add('reload');
+                    break;
+            }
+            
+            enableCards();
+        }, n * 50 + 700);       
+
+    } else {
+
+        setTimeout(() => {
+            reverses = 2;
+            document.querySelector('.stock.cell').classList.remove('reload', 'reverse1');
+            document.querySelector('.stock.cell').classList.add('reverse2');
+        }, n * 50 + 700);
+    }
+
+    return delay;
 } 
 
 const drawCard = (card) => {
@@ -526,7 +781,16 @@ const drawCard = (card) => {
 
     // console.log(matrix.m41 - (card.getBoundingClientRect().left - wasteCell.getBoundingClientRect().left), matrix.m42 - (card.getBoundingClientRect().top - wasteCell.getBoundingClientRect().top));
 
-    card.style.zIndex = zIndex();
+    // card.style.transition = '';
+    // card.firstElementChild.firstElementChild.style.transition = '';
+    // card.firstElementChild.lastElementChild.style.transition = '';
+
+    let wasteCards = document.querySelectorAll(".waste:not(.cell)");
+
+    // card.style.zIndex = zIndex();
+
+    card.style.zIndex = Math.pow(2, wasteCards.length + 1);
+
     card.querySelector(".card").classList.add("zoom");
     card.classList.remove("stock");
     card.classList.add("waste");
@@ -536,8 +800,10 @@ const drawCard = (card) => {
 
     let cards = document.querySelectorAll(".stock:not(.cell)");
 
-    if (cards.length == 0) setTimeout(enableReverseButton, 500);
-
+    if (cards.length > 0) return;
+        
+    reverses > 0 ? setTimeout(enableReverseButton, 600) : setTimeout(enableReloadButton, 600);
+  
     // if (lost()) setTimeout(gameOver, 600);
 }
 
@@ -561,20 +827,22 @@ const checkFoundations = (card) => {
     // let rank = parseInt(card.dataset.rank);
     // let suit = card.dataset.suit;
 
-    const colOrder = () => {
+    // const colOrder = () => {
 
-        let order = [1,2,3,4];
+    //     let order = [1,2,3,4];
 
-        for (let i = 1; i < Number(card.dataset.f); i++) {
-            order.push(order.shift());
-        }
+    //     for (let i = 1; i < Number(card.dataset.f); i++) {
+    //         order.push(order.shift());
+    //     }
 
-        return order;
-    }
+    //     return order;
+    // }
+
+    if (card.hasAttribute('data-f')) return;
 
     if (!openCard(card)) return null;
 
-    for (let n of colOrder()) {
+    for (let n of [1,2,3,4]) {
 
     // for (let n = 1; n <= 4; n++) {
 
@@ -604,19 +872,18 @@ const checkColumns = (card) => {
 
     // if (!openCard(card)) return null;
     
-    const colOrder = () => {
+    // const colOrder = () => {
 
-        let order = [1,2,3,4,5,6,7];
+    //     let order = [1,2,3,4,5,6,7];
 
-        for (let i = 1; i < Number(card.dataset.col); i++) {
-            order.push(order.shift());
-        }
+    //     for (let i = 1; i < Number(card.dataset.col); i++) {
+    //         order.push(order.shift());
+    //     }
 
-        return order;
-    }
+    //     return order;
+    // }
 
-
-    for (let n of colOrder()) {
+    for (let n of [1,2,3,4,5,6,7]) {
     // for (let n = 1; n <= 7; n++) {
 
         // let topIndex = 0;
@@ -633,7 +900,8 @@ const checkColumns = (card) => {
         // let topCard = topFoundation(i);
 
         if (!topCard && parseInt(card.dataset.rank) != 13) continue;
-        // if (!topCard && parseInt(card.dataset.rank) == 13 && parseInt(card.style.zIndex) == 2) continue;
+        if (!topCard && parseInt(card.dataset.rank) == 13 && parseInt(card.style.zIndex) == 1 && card.hasAttribute('data-col')) continue;
+        // if (parseInt(card.dataset.rank) == 13 && card.hasAttribute('data-f')) continue;
 
         // if (parseInt(card.dataset.rank) == 13) console.log(card.style.zIndex);
 
@@ -664,6 +932,8 @@ const openCard = (card) => {
 const moveToFounation = (card, n, zIndex) => {
 
     let cards =  document.querySelectorAll(`[data-f="${n}"]`);
+    let col = card.dataset.col;
+
 
     for (let card of cards) {
         disableCard(card);
@@ -678,6 +948,9 @@ const moveToFounation = (card, n, zIndex) => {
         let card = e.currentTarget;
 
         // card.style.zIndex = Math.pow(2, Number(card.dataset.rank));
+        card.style.transition = '';
+
+        card.classList.remove('move2f');
          
         card.style.zIndex = zIndex + 1;
         enableCard(card);
@@ -713,8 +986,16 @@ const moveToFounation = (card, n, zIndex) => {
     card.classList.remove('waste');
     card.removeAttribute('data-col');
 
+    card.classList.add('move2f');
+
     card.style.transition = `all 0.5s ease-in-out`;
     card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+    decompressCards(col);
+
+    // console.log("WIN", win());
+
+    if (win()) setTimeout(resetGame, 2000);
     
     return true;
 }
@@ -736,12 +1017,16 @@ const moveToColumn = (card, n0, n, topCard) => {
         disableCard(card);
     }
 
+    if (topCard && topCard.classList.contains('move2c')) return;
+
     // let zIndex = topCard == undefined ? 0 : parseInt(topCard.style.zIndex);
     // let zIndex = topCard ? parseInt(topCard.style.zIndex) : 0;
 
     let zIndex = topCard ? topColCards.length : 0;
 
-    let baseIndex = Math.log2(Number(moveCards[0].style.zIndex));
+    // let baseIndex = Math.log2(Number(moveCards[0].style.zIndex));
+    let baseIndex = Number(moveCards[0].style.zIndex);
+
 
     // console.log(moveCards, moveCards[0]);
     
@@ -753,13 +1038,12 @@ const moveToColumn = (card, n0, n, topCard) => {
 
         card.style.transform = card.style.transform.replace("scale(1.1)", "");
 
-        console.log(card);
+        // console.log(card);
 
         let offsetPlus;
 
-        // let i = Number(card.style.zIndex) -  baseIndex;
-
-        let i = Math.log2(Number(card.style.zIndex)) -  baseIndex;
+        let i = Number(card.style.zIndex) -  baseIndex;
+        // let i = Math.log2(Number(card.style.zIndex)) -  baseIndex;
 
         
         disableCard(card);
@@ -767,12 +1051,15 @@ const moveToColumn = (card, n0, n, topCard) => {
         card.addEventListener('transitionend', (e) => {
 
             let card = e.currentTarget;
+
+            card.style.transition = '';
+
+            card.classList.remove('move2c');
              
-            // card.style.zIndex = zIndex + 1 + i;
+            card.style.zIndex = zIndex + 1 + i;
+            // card.style.zIndex = Math.pow(2, zIndex + 1 + i);
 
-            card.style.zIndex = Math.pow(2, zIndex + 1 + i);
-
-            console.log(Math.pow(2, zIndex + 1 + i));
+            // console.log(Math.pow(2, zIndex + 1 + i));
 
 
             // card.style.zIndex = 20 - Number(card.dataset.rank);
@@ -824,6 +1111,12 @@ const moveToColumn = (card, n0, n, topCard) => {
             offsetPlus = parseInt(card.dataset.rank) != 13 ? card.getBoundingClientRect().height * (zIndex + i) / coef : 0;
         }
 
+        // if (topCard) {
+        //     offsetPlus = parseInt(card.dataset.rank) != 13 ? topCard.offsetTop - topCell.top + (topCard.offsetHeight / coef) * (i + 1) : 0;
+        // } else {
+        //     offsetPlus = parseInt(card.dataset.rank) != 13 ? card.offsetHeight * (zIndex + i) / coef : 0;
+        // }
+
         let style = window.getComputedStyle(card);
         let matrix = new WebKitCSSMatrix(style.transform);
 
@@ -836,17 +1129,24 @@ const moveToColumn = (card, n0, n, topCard) => {
         // console.log(offsetLeft, offsetLeft2, offsetTop, offsetTop2);
 
     
-        card.style.zIndex = parseInt(card.style.zIndex) + 1000000;
+        card.style.zIndex = Number(card.style.zIndex) + 50;
+        // card.style.zIndex = Number(card.style.zIndex) + 60;
+
+
         // card.style.zIndex = 20 - Number(card.dataset.rank) + 10000;
 
         card.querySelector(".card").classList.add("zoom");
         card.dataset.col = n;
         card.classList.remove('waste');
         card.removeAttribute('data-f');
+
+        card.classList.add('move2c');
     
         card.style.transition = `all 0.5s ease-in-out`;
         card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
     });
+
+    decompressCards(col);
 
     const compressCards = () => {
 
@@ -863,6 +1163,8 @@ const moveToColumn = (card, n0, n, topCard) => {
         let closedCards =  document.querySelectorAll(`[data-col="${col}"]:not(.flip)`);
 
         let cards = document.querySelectorAll(`[data-col="${col}"]`);
+
+        if (closedCards.length == 0) return;
 
         for (let i = 0; i < cards.length; i++) {
             if (parseInt(cards[i].style.zIndex) > parseInt(lastCard.style.zIndex)) lastCard = cards[i];
@@ -889,19 +1191,25 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             for (let j = 0; j < cards.length; j++) {
                 // console.log(parseInt(cards[j].style.zIndex));
-                // if (parseInt(cards[j].style.zIndex) == i + 1) card = cards[j];
-                // if (parseInt(cards[j].style.zIndex) == i) previousCard = cards[j];
-                if (parseInt(Math.log2(cards[j].style.zIndex)) == i + 1) card = cards[j];
-                if (parseInt(Math.log2(cards[j].style.zIndex)) == i) previousCard = cards[j];
+                if (parseInt(cards[j].style.zIndex) == i + 1) card = cards[j];
+                if (parseInt(cards[j].style.zIndex) == i) previousCard = cards[j];
+                // if (parseInt(Math.log2(cards[j].style.zIndex)) == i + 1) card = cards[j];
+                // if (parseInt(Math.log2(cards[j].style.zIndex)) == i) previousCard = cards[j];
             }
 
             if (i == 1) gap = card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top;
+            // if (i == 1) gap = card.offsetTop - previousCard.offsetTop;
+
 
             let cells = document.querySelectorAll('.cell');
 
             let cellGap = cells[14].getBoundingClientRect().top - cells[7].getBoundingClientRect().top;
+            // let cellGap = cells[14].offsetTop - cells[7].offsetTop;
 
-            console.log(gap, cellGap);
+            // console.log(gap, gap2, cellGap, cellGap2);
+
+
+            // console.log(gap, cellGap);
             // console.log(gap);
 
             // i = 0;
@@ -909,8 +1217,9 @@ const moveToColumn = (card, n0, n, topCard) => {
             // let coef = screen.width > 460 && screen.height > 460 ? 3 : 2.5;
 
             let coef = card.offsetHeight / (card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top);
+            // let coef = card.offsetHeight / (card.offsetTop - previousCard.offsetTop);
 
-            console.log(card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top);
+            // console.log(card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top);
 
             let topCell = document.querySelectorAll(".cell")[n + 7 - 1];
 
@@ -918,17 +1227,21 @@ const moveToColumn = (card, n0, n, topCard) => {
             // let rect2 =  topCard.getBoundingClientRect();
 
             let offsetPlus = previousCard.getBoundingClientRect().top - rect1.top + (previousCard.getBoundingClientRect().height / coef) * (1);
+            // let offsetPlus = previousCard.offsetTop - rect1.top + (previousCard.offsetHeight / coef) * (1);
+
 
             let style = window.getComputedStyle(card);
             let matrix = new WebKitCSSMatrix(style.transform);
 
+            // let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - topCell.getBoundingClientRect().left);
+            // let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - topCell.getBoundingClientRect().top) + offsetPlus;
             let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - topCell.getBoundingClientRect().left);
             let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - topCell.getBoundingClientRect().top) + offsetPlus;
 
             // let offsetLeft = topCell.offsetLeft - card.offsetLeft;
             // let offsetTop = topCell.offsetTop - card.offsetTop + offsetPlus;
 
-            console.log(topCell.offsetLeft, topCell.getBoundingClientRect().left);
+            // console.log(topCell.offsetLeft, topCell.getBoundingClientRect().left);
 
             let rect = lastCard.getBoundingClientRect();
 
@@ -941,6 +1254,8 @@ const moveToColumn = (card, n0, n, topCard) => {
             // console.log(offset); 
 
             if (card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top - offset < 8) return;
+            // if (card.offsetTop - previousCard.offsetTop - offset < 8) return;
+
 
             if (offset <= 0) continue;
 
@@ -954,8 +1269,8 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             // offset = card.classList.contains('flip') ? Math.ceil(offset / closedCards.length) * closedCards.length : Math.ceil(offset / closedCards.length) * (parseInt(card.style.zIndex) - 1);
 
-            // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
-            offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
+            offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+            // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
 
 
 
@@ -967,9 +1282,29 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             // card.style.zIndex = 100;
 
+            console.log(gap, cellGap, Math.abs(gap - cellGap));
+
+            disableCard(card);
+
+            card.classList.add('move2c');
+
+            console.log('COMPRESS START');
+
             card.style.transition = `all 0.3s 0.0s linear`;
             card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - offset}px)`;
-            
+
+            card.addEventListener('transitionend', (e) => {
+ 
+                let card = e.currentTarget;
+
+                enableCard(card);
+
+                console.log('COMPRESS END');
+
+        
+                card.classList.remove('move2c');        
+               
+            }, {once: true}); 
         }
     }
     // }, 550);
@@ -977,22 +1312,17 @@ const moveToColumn = (card, n0, n, topCard) => {
     return true;
 }
 
-const reverseNextCard = (col) => {
+const decompressCards = (col) => {
+    // setTimeout(() => {
 
-    let zIndex = 0;
-    let topCard;
+    if (col == undefined) return;
 
-    let cards =  document.querySelectorAll(`[data-col="${col}"]`);
-
-    if (cards.length == 0) return;
-
-    for (let card of cards) {
-        if (Number(card.style.zIndex) > zIndex) [zIndex, topCard] = [Number(card.style.zIndex), card];
-    }
-
-    setTimeout(() => {
+    // console.log('DECOMPRESS: ', col);
 
         let gap;
+
+        let zIndex = 0;
+        let topCard;
 
         if (!col) return;
 
@@ -1006,20 +1336,34 @@ const reverseNextCard = (col) => {
 
         let cellGap = cells[14].getBoundingClientRect().top - cells[7].getBoundingClientRect().top;
 
+        if (closedCards.length == 0) return;
+
+        for (let card of cards) {
+            if (Number(card.style.zIndex) > zIndex) [zIndex, topCard] = [Number(card.style.zIndex), card];
+        }
+
         for (let i = 1; i < cards.length; i++) {
 
             let card, previousCard
 
             for (let j = 0; j < cards.length; j++) {
-                // if (Number(cards[j].style.zIndex) == i + 1) card = cards[j];
-                // if (Number(cards[j].style.zIndex) == i) previousCard = cards[j];
-                if (Math.log2(Number(cards[j].style.zIndex)) == i + 1) card = cards[j];
-                if (Math.log2(Number(cards[j].style.zIndex)) == i) previousCard = cards[j];
+                if (Number(cards[j].style.zIndex) == i + 1) card = cards[j];
+                if (Number(cards[j].style.zIndex) == i) previousCard = cards[j];
+                // if (Math.log2(Number(cards[j].style.zIndex)) == i + 1) card = cards[j];
+                // if (Math.log2(Number(cards[j].style.zIndex)) == i) previousCard = cards[j];
             }
 
             if (i == 1) gap = card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top;
 
-            if (gap == cellGap) return;
+            // console.log(gap, cellGap, Math.abs(gap - cellGap));
+
+            // if (Math.round(gap) == Math.round(cellGap)) return;
+
+            if (Math.abs(gap - cellGap) < 1) return;
+
+            console.log(gap, cellGap, Math.abs(gap - cellGap));
+
+            // console.log(gap, cellGap);
 
             let coef = card.offsetHeight / (card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top);
 
@@ -1047,7 +1391,7 @@ const reverseNextCard = (col) => {
 
             offset = Math.max(gap - cellGap, Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length));
 
-            console.log(gap - cellGap, Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length));
+            // console.log(gap - cellGap, Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length));
 
             // offset = gap - cellGap;
 
@@ -1055,36 +1399,185 @@ const reverseNextCard = (col) => {
 
             if (gap - cellGap > Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length)) {
 
-                // offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (parseInt(card.style.zIndex) - 1));
-                offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (Math.log2(parseInt(card.style.zIndex)) - 1));
+                offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (parseInt(card.style.zIndex) - 1));
+                // offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (Math.log2(parseInt(card.style.zIndex)) - 1));
 
             } else {
 
-                // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
-                offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
+                offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+                // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
 
             }
 
+            disableCard(card);
+            card.classList.add('move2c');
+            // card.classList.add('move2dec');
+
+            console.log('DECOMPRESS START');
+
             card.style.transition = `all 0.3s 0.0s linear`;
             card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - offset}px)`;
+
+            card.addEventListener('transitionend', (e) => {
+ 
+                let card = e.currentTarget;
+
+                enableCard(card);
+
+                console.log('DECOMPRESS END');
+
+        
+                card.classList.remove('move2c'); 
+                // card.classList.remove('move2dec');
+      
+               
+            }, {once: true}); 
+
         }
        
-    }, 550);
+    // }, 550);
+    }
+
+const reverseNextCard = (col) => {
+
+    let zIndex = 0;
+    let topCard;
+
+    let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+
+    if (cards.length == 0) return;
+
+    for (let card of cards) {
+        if (Number(card.style.zIndex) > zIndex) [zIndex, topCard] = [Number(card.style.zIndex), card];
+    }
+
+    // const decompressCards = () => {
+    // // setTimeout(() => {
+
+    //     let gap;
+
+    //     if (!col) return;
+
+    //     // console.log(col);
+
+    //     let closedCards =  document.querySelectorAll(`[data-col="${col}"]:not(.flip)`);
+
+    //     let cards =  document.querySelectorAll(`[data-col="${col}"]`);
+
+    //     let cells = document.querySelectorAll('.cell');
+
+    //     let cellGap = cells[14].getBoundingClientRect().top - cells[7].getBoundingClientRect().top;
+
+    //     for (let i = 1; i < cards.length; i++) {
+
+    //         let card, previousCard
+
+    //         for (let j = 0; j < cards.length; j++) {
+    //             if (Number(cards[j].style.zIndex) == i + 1) card = cards[j];
+    //             if (Number(cards[j].style.zIndex) == i) previousCard = cards[j];
+    //             // if (Math.log2(Number(cards[j].style.zIndex)) == i + 1) card = cards[j];
+    //             // if (Math.log2(Number(cards[j].style.zIndex)) == i) previousCard = cards[j];
+    //         }
+
+    //         if (i == 1) gap = card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top;
+
+    //         if (gap == cellGap) return;
+
+    //         let coef = card.offsetHeight / (card.getBoundingClientRect().top - previousCard.getBoundingClientRect().top);
+
+    //         let topCell = document.querySelectorAll(".cell")[parseInt(col) + 7 - 1];
+
+    //         let rect1 =  topCell.getBoundingClientRect();
+    //         // let rect2 =  topCard.getBoundingClientRect();
+
+    //         let offsetPlus = previousCard.getBoundingClientRect().top - rect1.top + (previousCard.getBoundingClientRect().height / coef);
+
+    //         let style = window.getComputedStyle(card);
+    //         let matrix = new WebKitCSSMatrix(style.transform);
+
+    //         let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - topCell.getBoundingClientRect().left);
+    //         let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - topCell.getBoundingClientRect().top) + offsetPlus;
+
+    //         // let offsetLeft = topCell.offsetLeft - card.offsetLeft;
+    //         // let offsetTop = topCell.offsetTop - card.offsetTop + offsetPlus;
+
+    //         let rect = topCard.getBoundingClientRect();
+
+    //         // let offset = Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length);
+
+    //         // let offset = Math.floor((window.innerHeight - rect.bottom - 5));
+
+    //         offset = Math.max(gap - cellGap, Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length));
+
+    //         // console.log(gap - cellGap, Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length));
+
+    //         // offset = gap - cellGap;
+
+    //         if (offset >= 0) continue;
+
+    //         if (gap - cellGap > Math.floor((rect.bottom - window.innerHeight + 5) / closedCards.length)) {
+
+    //             offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (parseInt(card.style.zIndex) - 1));
+    //             // offset = card.getBoundingClientRect().top - (topCell.getBoundingClientRect().top + cellGap * (Math.log2(parseInt(card.style.zIndex)) - 1));
+
+    //         } else {
+
+    //             offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (parseInt(card.style.zIndex) - 1);
+    //             // offset = card.classList.contains('flip') ? offset * closedCards.length : offset * (Math.log2(parseInt(card.style.zIndex)) - 1);
+
+    //         }
+
+    //         card.style.transition = `all 0.3s 0.0s linear`;
+    //         card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - offset}px)`;
+
+    //         card.classList.add('move2c');
+
+    //         card.addEventListener('transitionend', (e) => {
+ 
+    //             let card = e.currentTarget;
+        
+    //             card.classList.remove('move2c');        
+               
+    //         }, {once: true}); 
+
+    //     }
+       
+    // // }, 550);
+    // }
 
     if (topCard.classList.contains('flip')) return;
 
     disableCard(topCard);
-    topCard.addEventListener('transitionend', enableCard); 
+    // topCard.addEventListener('transitionend', enableCard); 
+
+    topCard.addEventListener('transitionend', (e) => {
+
+        // console.log('REVERSES');
+
+        let card = e.currentTarget;
+
+        card.classList.remove('move2c');
+
+        enableCard(card);
+        // decompressCards(col);
+    }, {once: true}); 
+
     topCard.querySelectorAll('.front, .back').forEach(card => {
         card.style.transition = 'all 0.5s 0.1s linear';
     });    
     topCard.querySelector(".card").classList.add("zoom");
     topCard.classList.toggle("flip");
 
+    topCard.classList.add('move2c');
+
+    // decompressCards(col);
+
     // console.log(topCard);
 }
 
 const nextMove = () => {
+
+    if (document.hidden) return;
 
     let cards = document.querySelectorAll(".card-wrap");
 
@@ -1102,8 +1595,8 @@ const nextMove = () => {
     // }, {once: true}, false);
 
     if (movesAI.length == 0) {
-        setTimeout(clearBoard, 2000);
-        setTimeout(init, 3000);
+        // setTimeout(clearBoard, 2000);
+        // setTimeout(init, 3000);
         return;
     }
 
@@ -1130,7 +1623,8 @@ const turn = (e) => {
 
     // console.log(cardNumber, deckSize - fieldSize);
 
-    if (!card.classList.contains("flip") && cardNumber >= fieldSize) {
+    if (!card.classList.contains("flip") && cardNumber < deckSize - fieldSize) {
+        
         drawCard(card);     
         
         if (aiMode()) nextMove();
@@ -1214,6 +1708,54 @@ const enableReverseButton = () => {
     }
 } 
 
+const refreshGame = () => {
+    disableCards();
+    let timeOut = 0;
+
+    let cards = document.querySelectorAll('.card-wrap');
+
+    for (let card of cards) {
+
+        if (card.classList.contains('move2f') || card.classList.contains('move2c')) {
+            timeOut = 500;
+            break;
+        }
+    }
+
+    setTimeout(() => {
+        let delay = clearTable();
+        setTimeout(setTable, delay * 1000 + 1000, {reset: false});        
+        setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+    }, timeOut); 
+}
+
+const enableReloadButton = () => {
+
+    document.querySelector('.stock.cell').addEventListener('mousedown', (e) => {
+        // disableCards();
+        // setTimeout(() => {
+        //     let delay = clearTable();
+        //     setTimeout(setTable, delay * 1000 + 1000, {reset: false});        
+        //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+        // }, 500); 
+        
+        refreshGame();
+
+    }, {once: true});
+    
+    document.querySelector('.stock.cell').addEventListener('touchstart', (e) => {
+        // disableCards();
+        // setTimeout(() => {
+        //     let delay = clearTable();
+        //     setTimeout(setTable, delay * 1000 + 1000, {reset: false});        
+        //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+        // }, 500);  
+
+        refreshGame();
+
+    }, {once: true});
+}
+
 const enableCard = (card) => {
 
     card = card.currentTarget ? card.currentTarget : card;
@@ -1261,11 +1803,14 @@ const disableTapZoom = () => {
 
     const preventDefault = (e) => e.preventDefault();
 
-    document.body.addEventListener('touchstart', preventDefault, { passive: false });
-    document.body.addEventListener('mousedown', preventDefault, {passive: false});
+    // document.body.addEventListener('touchstart', preventDefault, { passive: false });
+    // document.body.addEventListener('mousedown', preventDefault, {passive: false});
+
+    document.addEventListener('touchstart', preventDefault, { passive: false });
+    document.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
-const clearBoard = () => {
+const resetCards = () => {
 
     let cards = document.querySelectorAll(".card-wrap");
 
@@ -1282,7 +1827,23 @@ const clearBoard = () => {
     }
 }
 
+const resetCard = (e) => {
+
+    let card = e.currentTarget ? e.currentTarget : e;
+
+    card.removeAttribute('style');
+    card.classList.remove('flip');
+
+    card.firstElementChild.firstElementChild.removeAttribute('style');
+    card.firstElementChild.firstElementChild.classList.remove('red');
+    card.firstElementChild.lastElementChild.removeAttribute('style');
+
+    Object.keys(card.dataset).forEach(dataKey => delete card.dataset[dataKey])
+}
+
 const aiPlay = () => {
+
+    console.log('AIPLAY');
 
     let event = new Event('mousedown');
     let cards = document.querySelectorAll(".card-wrap");
@@ -1298,9 +1859,9 @@ const aiPlay = () => {
 
                 clearInterval(interval);
 
-                setTimeout(clearBoard, 2000);
+                // setTimeout(resetCards, 2000);
 
-                setTimeout(init, 3000);
+                // setTimeout(init, 3000);
 
                 return;
             }
@@ -1312,8 +1873,10 @@ const aiPlay = () => {
             cards[move].dispatchEvent(event);
     }
 
-    let move = moves.shift();
-    turn(cards[move]);
+    nextMove();
+
+    // let move = moves.shift();
+    // turn(cards[move]);
 
     // let interval = setInterval(play, 700);
 }
@@ -1335,6 +1898,458 @@ const aiPlay = () => {
 //     // setTimeout(aiPlay, 4000);  
 // }
 
+const order = (cards) => {
+
+    let order = [];
+
+    for (let i = 0; i < cards.length; i++) {
+
+        // if (!cards[i].classList.contains("pile")) continue;
+
+        order.push({i, zIndex:parseInt(cards[i].style.zIndex)});
+    }
+
+    if (order.length == 0) return order;
+
+    order.sort((a,b) => b.zIndex - a.zIndex);
+
+    // console.log(order);
+
+    return order.map(a => a.i);
+}
+
+const clearTableOld = () => {
+
+    // let cards = document.querySelectorAll('.card-wrap');
+    let topCell = document.querySelectorAll('.cell')[3];
+    let offsetPlus = safari() ? 10 : 50;
+    let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+
+    let delay = 0;
+    let interval = 0.1;
+    let duration = 0.5;
+    let orderedCards = [];
+    let cards = [];
+
+    for (let i = 0; i < 4; i++) {
+
+        cards[i] = document.querySelectorAll(`[data-f="${i + 1}"]`);
+
+        console.log(cards[i]);
+
+        orderedCards[i] = order(cards[i]);
+    }
+
+    console.table(orderedCards);
+
+
+    // let order = pileOrder(cards);
+
+    // order.push(0);
+
+    // console.log(order);
+
+    for (let i = 0; i < 13; i++) {
+
+        delay += interval;
+
+        for (let j = 0; j < 4; j++) {
+
+            let card = cards[j][orderedCards[j][i]];
+
+            // console.log(orderedCards[j][i]);
+            // console.log(card);
+
+
+            card.addEventListener('transitionend', resetCard, {once: true}); 
+
+            let offsetLeft = topCell.offsetLeft - card.offsetLeft;
+            let offsetTop = topCell.offsetTop + offset - card.offsetTop;
+
+            card.style.transition = `all ${duration}s ${delay}s linear`;
+            card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+        }
+    }
+
+    // for (let i of order) {
+
+    //     let card = cards[i];
+
+    //     delay += interval;
+
+    //     card.addEventListener('transitionend', resetCard); 
+
+    //     let offsetLeft = topCell.offsetLeft - card.offsetLeft;
+    //     let offsetTop = topCell.offsetTop + offset - card.offsetTop;
+
+    //     card.style.transition = `all ${duration}s ${delay}s linear`;
+    //     card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+    // }
+}
+
+const clearTable = () => {
+
+    reverses = 2;
+    let delay = 0;
+
+    delay = reverseStock({final: true});
+
+    delay = clearField(delay);
+
+    console.log(delay);
+
+    delay = clearFoundations(delay);
+
+    return delay;
+}
+
+const clearFoundations = (delay, {final = false} = {}) => {
+
+    // let cards = document.querySelectorAll('.card-wrap');
+    // let topCell = document.querySelectorAll('.cell')[3];
+    // let offsetPlus = safari() ? 10 : 50;
+    // let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+
+    // let delay = 0;
+    let interval = 0.10;
+    let duration = 0.5;
+    let orderedCards = [];
+    let cards = [];
+
+    for (let card of document.querySelectorAll('[data-f]')) {
+
+        card.style.transition = '';
+        // card.firstElementChild.firstElementChild.style.transition = '';
+
+        card.style.zIndex = Number(card.style.zIndex) + 10;
+    }
+
+    for (let i = 0; i < 4; i++) {
+
+        cards[i] = document.querySelectorAll(`[data-f="${i + 1}"]`);
+
+        console.log(cards[i]);
+
+        orderedCards[i] = order(cards[i]);
+    }
+
+    console.table(orderedCards);
+
+    let stockCell = document.querySelector('.stock');
+
+    let zIndex = 1;
+
+    for (let j = 3; j >= 0; j--) {
+
+        for (let i = 0; i < cards[j].length; i++) {
+
+            delay += interval;
+
+            zIndex++;
+
+
+            let card = cards[j][orderedCards[j][i]];
+
+            let style = window.getComputedStyle(card);
+            let matrix = new WebKitCSSMatrix(style.transform);
+        
+            let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - stockCell.getBoundingClientRect().left);
+            let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - stockCell.getBoundingClientRect().top);
+
+            card.classList.remove("flip");
+            card.style.zIndex = 0;
+
+            card.firstElementChild.firstElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+            card.firstElementChild.lastElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+
+            card.style.transition = `all ${duration}s ${delay}s linear`;
+            card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+            card.addEventListener('transitionend', (e) => {
+
+                let card = e.currentTarget;
+
+                card.style.zIndex = 'auto';
+                // Object.keys(card.dataset).forEach(dataKey => delete card.dataset[dataKey]);
+                card.classList.add("stock");
+                card.style.transition = '';
+                card.removeAttribute('data-f');
+                card.firstElementChild.firstElementChild.removeAttribute("style");
+                card.firstElementChild.lastElementChild.removeAttribute("style");
+
+                if (final) {
+                    // card.firstElementChild.firstElementChild.removeAttribute("style");
+                    // card.firstElementChild.lastElementChild.removeAttribute("style");
+                    card.firstElementChild.firstElementChild.classList.remove('red');
+                    Object.keys(card.dataset).forEach(dataKey => delete card.dataset[dataKey]);
+                }
+    
+            }, {once: true}); 
+
+        }
+    }
+
+    return delay;
+}
+
+const clearField = (delay) => {
+
+    // let cards = document.querySelectorAll('.card-wrap');
+    // let topCell = document.querySelectorAll('.cell')[3];
+    // let offsetPlus = safari() ? 10 : 50;
+    // let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+
+    // let delay = 0;
+    let interval = 0.10;
+    let duration = 0.5;
+    let orderedCards = [];
+    let cards = [];
+
+    // for (let card of document.querySelectorAll('.card-wrap')) {
+
+    //     card.style.transition = '';
+    //     card.style.zIndex = Number(card.style.zIndex) + 10;
+    // }
+
+    for (let i = 0; i < 7; i++) {
+
+        cards[i] = document.querySelectorAll(`[data-col="${i + 1}"]`);
+
+        console.log(cards[i]);
+
+        orderedCards[i] = order(cards[i]);
+    }
+
+    console.table(orderedCards);
+
+    let stockCell = document.querySelector('.stock');
+
+    let zIndex = 1;
+
+    for (let j = 6; j >= 0; j--) {
+
+        for (let i = 0; i < cards[j].length; i++) {
+
+            delay += interval;
+
+            zIndex++;
+
+            let card = cards[j][orderedCards[j][i]];
+
+            let style = window.getComputedStyle(card);
+            let matrix = new WebKitCSSMatrix(style.transform);
+        
+            let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - stockCell.getBoundingClientRect().left);
+            let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - stockCell.getBoundingClientRect().top);
+
+            card.classList.remove("flip");
+            // card.style.zIndex = zIndex;
+
+            card.firstElementChild.firstElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+            card.firstElementChild.lastElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+
+            card.style.transition = `all ${duration}s ${delay}s linear`;
+            card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+            card.addEventListener('transitionend', (e) => {
+
+                let card = e.currentTarget;
+    
+                card.firstElementChild.firstElementChild.removeAttribute("style");
+                card.firstElementChild.lastElementChild.removeAttribute("style");
+                card.style.transition = '';
+                card.style.zIndex = 'auto';
+                card.classList.add("stock");
+                card.removeAttribute('data-col');
+
+
+                // card.firstElementChild.firstElementChild.classList.remove('red');
+            
+                // Object.keys(card.dataset).forEach(dataKey => delete card.dataset[dataKey]);
+
+                // card.style.zIndex = 0;
+    
+            }, {once: true}); 
+
+        }
+    }
+
+    return delay;
+}
+
+const clearTable3 = () => {
+
+    let cards = [...document.querySelectorAll('.card-wrap')];
+    let topCell = document.querySelectorAll('.cell')[3];
+    let offsetPlus = safari() ? 10 : 50;
+    let offset = window.innerHeight - topCell.parentNode.parentNode.offsetTop + offsetPlus;
+
+    let delay = 0;
+    let interval = 0.1;
+    let duration = 0.5;
+    let orderedCards = [];
+    // let cards = [];
+
+    // for (let i = 0; i < 4; i++) {
+
+    //     cards[i] = document.querySelectorAll(`[data-f="${i + 1}"]`);
+
+    //     console.log(cards[i]);
+
+    //     orderedCards[i] = order(cards[i]);
+    // }
+
+    cards.reverse();
+
+    let stockCell = document.querySelector('.stock');
+
+    for (let card of cards) {
+
+        // delay += interval;
+
+
+        // let card = cards[j][orderedCards[j][i]];
+
+        let style = window.getComputedStyle(card);
+        let matrix = new WebKitCSSMatrix(style.transform);
+    
+        let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - stockCell.getBoundingClientRect().left);
+        let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - stockCell.getBoundingClientRect().top);
+
+        card.classList.remove("flip");
+        
+        // card.style.zIndex = 'auto';
+
+        card.firstElementChild.firstElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+        card.firstElementChild.lastElementChild.style.transition = `all ${duration}s ${delay}s linear`;
+
+        card.style.transition = `all ${duration}s ${delay}s linear`;
+        card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+        
+    }
+}
+
+const clearTable4 = () => {
+
+    let cards = [...document.querySelectorAll('.card-wrap')];
+
+    // cards.reverse();
+
+    // card.style.transformOrigin = `${3 * 33.33}% ${3 * 33.33}%`;
+
+    let xs = ['left', 'center', 'right']; 
+    let ys = ['top', 'center', 'bottom']; 
+    let delay = 0
+
+    for (let card of cards) {
+
+        let x = xs[Math.trunc(Math.random() * 3)];
+        let y = ys[Math.trunc(Math.random() * 3)];
+
+        delay += 0.1;
+
+
+        card.style.transformOrigin = `${x} ${y}`;
+    
+        card.style.transition = `all 0.5s ${delay}s linear`;
+
+        setTimeout(() => {
+
+            card.style.opacity = 0;
+            card.style.transform += "scale(3.0)";
+
+        }, 0);
+    }
+}
+
+const fillFoundations = (topCell, cards, offset, delay, interval, duration) => {
+
+    let fCells = document.querySelectorAll('.foundation.cell');
+
+    for (let i = 0; i < deckSize; i++) {
+
+        delay += interval;
+
+        let card = cards[i];
+
+        card.style.left = topCell.getBoundingClientRect().left + 'px';
+        card.style.top = topCell.getBoundingClientRect().top +  offset + 'px';
+
+        card.style.display = 'block';
+        card.classList.add("stock");
+
+
+        let offsetLeft = fCells[i % 4].getBoundingClientRect().left - card.getBoundingClientRect().left;
+        let offsetTop = fCells[i % 4].getBoundingClientRect().top  - card.getBoundingClientRect().top ;
+
+        // card.style.zIndex = Math.trunc(i / 4) + 10;
+        card.style.zIndex = Math.trunc(i / 4);
+
+        card.dataset.f = i % 4 + 1;
+
+
+        card.firstElementChild.firstElementChild.style.transition = `all ${duration}s ${delay}s linear, opacity 0s linear`;
+        card.style.transition = `all ${duration}s ${delay}s linear, opacity 0s linear`;
+        card.style.opacity = 1;
+        card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop}px)`;
+
+        card.classList.add('flip');
+
+    }
+
+    return delay;
+}
+
+const designedShow = () => {
+
+    let designed = document.querySelector("#designed");
+
+    designed.classList.add("show");
+
+    designed.addEventListener('animationend', (e) => {
+
+        let el = e.currentTarget;
+
+        el.classList.remove("show");
+
+        setTimeout(() => {
+            setTable();        
+            // setTimeout(enableCards, 3700);  
+            aiMode() ? setTimeout(aiPlay, 5000) : setTimeout(enableCards, 3700);
+        }, 0)
+
+    }, {once: true}); 
+};
+
+const resetGame = () => {
+
+    disableCards();
+    clearFoundations(0, {final: true});
+    setTimeout(designedShow, 0);
+    setTimeout(() => {
+        reverses = 2;
+        document.querySelector('.stock.cell').classList.remove('reload', 'reverse1');
+        document.querySelector('.stock.cell').classList.add('reverse2');
+    }, 700);
+
+    // setTimeout(() => {
+    //     document.querySelector("#designed").classList.remove("show");
+    //     init();
+    // }, 6000 + 50 * 13);
+}
+
+const win = () => {
+
+    for (let i = 1; i <= 4; i++) {
+
+        let cards =  document.querySelectorAll(`[data-f="${i}"]`);
+
+        if (cards.length != 13) return false;
+    }
+
+    return true;
+}
+
 const aiMode = () => {
 
     let queryString = window.location.search;
@@ -1343,23 +2358,24 @@ const aiMode = () => {
     
     return mode == 'ai';
 
-    return true; //
+    // return true; //
 }
 
 const init = () => {
 
-    window.addEventListener('blur', () => {
-            if (aiMode()) clearTimeout(timer);
+    // window.addEventListener('blur', () => {
             
-        console.log("blur");
+    //     if (aiMode()) clearTimeout(timer);
+            
+    //     console.log("blur");
 
-        window.addEventListener('focus', () => {
+    //     window.addEventListener('focus', () => {
     
-            if (aiMode()) nextMove();
-            console.log("focus");
-        }, {once: true});
+    //         if (aiMode()) nextMove();
+    //         console.log("focus");
+    //     }, {once: true});
 
-    });
+    // }, false);
 
 //    window.addEventListener('blur', () => {
 //             if (aiMode()) clearTimeout(timer);
@@ -1375,22 +2391,34 @@ const init = () => {
 //     }, false);
 
 
+    showBoard();
 
-    document.addEventListener("visibilitychange", () => {
-        console.log("visibilitychange");
-    }, false);
+    // window.addEventListener("blur", () => {
+    //     console.log("blur");
+    // }, false);
 
-    window.addEventListener("pagehide", () => {
-        console.log("pagehide");
-    }, false);
+    // window.addEventListener("focus", () => {
+    //     console.log("focus");
+    // }, false);
 
-    window.addEventListener('beforeunload', () => {
-        console.log("beforeunload");
-    });
+    // document.addEventListener("visibilitychange", () => {
+    //     console.log("visibilitychange");
+    // }, false);
+
+    // window.addEventListener("pagehide", () => {
+    //     console.log("pagehide");
+    // }, false);
+
+    // window.addEventListener('beforeunload', () => {
+    //     console.log("beforeunload");
+    // }, false);
 
     disableTapZoom();
 
     // disableCards();
+    setCardsSize();
+    
+    placeCards();
 
     setTable();
 
@@ -1399,9 +2427,73 @@ const init = () => {
     setTimeout(enableCards, 3700);  
 
 
-    if (aiMode()) setTimeout(aiPlay, 4500);
+    if (aiMode()) setTimeout(() => {
 
-    // setTimeout(aiPlay, 4500);
+        if (touchScreen()) {
+
+            // window.addEventListener('blur', () => {
+            
+            //     // if (aiMode()) clearTimeout(timer);
+
+            //     clearTimeout(timer);
+    
+            //     console.log("blur");
+        
+            //     window.addEventListener('focus', () => {
+            
+            //         nextMove();
+
+            //         // if (aiMode()) nextMove();
+
+            //         console.log("focus");
+            //     }, {once: true});
+        
+            // }, false);
+
+            window.addEventListener('visibilitychange', () => {
+
+                console.log("visibilitychange");
+
+                document.hidden ? clearTimeout(timer) : nextMove();
+
+            }, false);
+
+
+        } else {
+
+            window.addEventListener('visibilitychange', () => {
+
+                console.log("visibilitychange");
+
+                document.hidden ? clearTimeout(timer) : nextMove();
+
+            }, false);
+        }
+        
+        aiPlay();
+
+    }, 5000);
+
+
+    // document.querySelector('.refresh').addEventListener('mousedown', (e) => {
+    //     disableCards();
+    //     let delay = clearTable();
+    //     setTimeout(setTable, delay * 1000 + 1000);        
+    //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+
+    // });
+
+    // document.querySelector('.refresh').addEventListener('touchstart', (e) => {
+    //     disableCards();
+    //     let delay = clearTable();
+    //     setTimeout(setTable, delay * 1000 + 1000);        
+    //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+
+    // });
+
+    // setTimeout(clearFoundations, 5000);
+    // setTimeout(clearField, 5000);
+
 
     // setTimeout(enableCards, 3700);  
     

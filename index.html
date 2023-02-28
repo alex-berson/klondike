@@ -12,13 +12,14 @@
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
     <script src="js/ai.js" defer></script>
-    <script src="js/klondike.js" defer></script>
     <script src="js/decks.js" defer></script>
+    <script src="js/klondike.js" defer></script>
 </head>
-<body class="noselect">
+<body>
     <!-- <div id="outer"> -->
         <!-- <div id="middle"> -->
             <!-- <div id="inner"> -->
+            <!-- <div class="container"> -->
                 <main>
                     <div class="table">
                         <div class="row">
@@ -28,7 +29,9 @@
                             <div class="cell foundation"></div>
                             <div class="cell"></div>
                             <div class="cell waste"></div>
-                            <div class="cell stock">○</div> 
+
+                            <!-- <div class="cell waste"><img src="images/rotate-solid.svg"</div> -->
+                            <div class="cell stock reverse2"></div> 
                             <!-- <div class="cell stock"><img src="images/refresh.svg" alt=""></div> -->
                         </div> 
                         <div class="row">
@@ -73,9 +76,9 @@
                         <div class="row">
                             <div class="cell"></div>
                         </div>
-                        <div id="designed">
+                        <!-- <div id="designed">
                             Designed by Alexander Berson
-                        </div>
+                        </div> -->
                         <div class="card-wrap">
                             <div class="card">
                                 <div class="front">
@@ -702,8 +705,22 @@
                         </div>
                     </div>
                 </main>
+                <div id ="designed">
+                    Designed by Alexander Berson
+                </div>
+            <!-- </div> -->
             <!-- </div> -->
         <!-- </div> -->
     <!-- </div> -->
+        <!-- <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; height: 100vh"> -->
+
+        <!-- <div class="container">
+            <div id="designed">
+                Designed by Alexander Berson
+            </div>
+        </div> -->
+            <!-- <div id="designed">
+                Designed by Alexander Berson
+            </div> -->
 </body>
 </html>

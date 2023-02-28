@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1000" height="1000" viewBox="0 0 1000 1000" xml:space="preserve">
+<desc>Created with Fabric.js 3.5.0</desc>
+<defs>
+</defs>
+<rect x="0" y="0" width="100%" height="100%" fill="rgba(255,255,255,0)"/>
+<g transform="matrix(1.9591 0 0 1.9591 500 500)" id="487575">
+<path style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; is-custom-font: none; font-file-url: none; fill: rgb(33,79,17); fill-rule: nonzero; opacity: 1;" vector-effect="non-scaling-stroke" transform=" translate(-263.9875, -255.9933)" d="M 463.5 224 H 472 c 13.3 0 24 -10.7 24 -24 V 72 c 0 -9.7 -5.8 -18.5 -14.8 -22.2 s -19.3 -1.7 -26.2 5.2 L 413.4 96.6 c -87.6 -86.5 -228.7 -86.2 -315.8 1 c -87.5 87.5 -87.5 229.3 0 316.8 s 229.3 87.5 316.8 0 c 12.5 -12.5 12.5 -32.8 0 -45.3 s -32.8 -12.5 -45.3 0 c -62.5 62.5 -163.8 62.5 -226.3 0 s -62.5 -163.8 0 -226.3 c 62.2 -62.2 162.7 -62.5 225.3 -1 L 327 183 c -6.9 6.9 -8.9 17.2 -5.2 26.2 s 12.5 14.8 22.2 14.8 H 463.5 z" stroke-linecap="round"/>
+</g>
+<g transform="matrix(1 0 0 1 481.3287 529.6285)" style="" id="656806">
+		
+<path xml:space="preserve" font-family="Roboto" font-size="500" font-style="normal" font-weight="bold" style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; is-custom-font: none; font-file-url: none; fill: rgb(33,79,17); fill-rule: nonzero; opacity: 1; white-space: pre;" d="M124.39 100.19L124.39 157.07L-119.26 157.07L-119.26 108.73L-4.27-13.83Q19.41-39.71 30.76-58.99Q42.11-78.28 42.11-95.62L42.11-95.62Q42.11-119.30 30.15-132.85Q18.19-146.40-4.03-146.40L-4.03-146.40Q-27.95-146.40-41.75-129.92Q-55.54-113.44-55.54-86.58L-55.54-86.58L-126.34-86.58Q-126.34-119.05-110.84-145.91Q-95.34-172.76-67.02-188.02Q-38.70-203.28-2.81-203.28L-2.81-203.28Q52.12-203.28 82.52-176.91Q112.92-150.55 112.92-102.45L112.92-102.45Q112.92-76.08 99.24-48.74Q85.57-21.40 52.37 14.98L52.37 14.98L-28.44 100.19L124.39 100.19Z"/></g>
+</svg>
