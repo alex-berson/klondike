@@ -5,13 +5,6 @@ let foundations = [[],[],[],[]];
 let tableau = [[],[],[],[],[],[],[]];
 let moves = [];
 
-// const shuffle = (array) => {
-//     for (let i = array.length - 1; i > 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [array[i], array[j]] = [array[j], array[i]] 
-//     }
-// }
-
 const reset = () => {
     deck = [];
     stock = [];
@@ -24,9 +17,7 @@ const reset = () => {
 const setDeck = (encDeck) => {
 
     let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let values = [1,2,3,4,5,6,7,8,9,10,11,12,13];
     let suits = [1,2,3,4];
-    // let encDeck = 'gYomEzutsyNkqABfSlUpZIVOnGDJQbCPjFKvcMRhiXrLHdWxaTwe';
     let open = false;
 
     for (let char of encDeck) {
@@ -37,8 +28,6 @@ const setDeck = (encDeck) => {
 
         deck.push({val, suit, col, open});
     }
-
-    // shuffle(deck);
 }
 
 const encriptDeckAI = () => {
@@ -52,8 +41,6 @@ const encriptDeckAI = () => {
 
         encDeck = encDeck + char;
     }
-
-    // console.log(encDeck);
 
     return encDeck;
 }
@@ -72,34 +59,16 @@ const setTableau = () => {
     }
 }
 
-// const setTableau = () => {
-
-//     deckCopy = [...deck];
-
-//     for (let i = 0; i < 7; i++) {
-//         for (let j = i; j < 7; j++) {
-
-//             let card = deckCopy.shift();
-//             if (i == j) card.open = true;
-//             tableau[j].push(card);
-//         }
-//     }
-
-//     stock = [...deckCopy];
-// }
-
 const checkLast = () => {
 
-    // console.log("CHECKLAST");
-
    for (let i = 0; i < 7; i++) {
-
 
         if (tableau[i].length == 0) continue;
 
         let card1 = tableau[i][tableau[i].length - 1];
 
         for (let j = 0; j < 4; j++) {
+
             if (foundations[j].length == 0) {
                 if (card1.val == 1) {
 
@@ -112,16 +81,13 @@ const checkLast = () => {
 
                     return true;
                 }
+
                 continue;
             }
 
             let card2 = foundations[j][foundations[j].length - 1];
 
             if (card1.suit == card2.suit && card1.val - card2.val == 1) {
-
-                // if (Number(card1.val) == 9 && Number(card1.suit) == 1) {
-                //     console.log(tableau.map(arr => arr.slice()));
-                // }
 
                 saveMove(card1);
 
@@ -141,12 +107,12 @@ const checkLast = () => {
 const checkFirst = () => {
 
     for (let i = 0; i < 7; i++) {
-
         for (let j = 0; j < tableau[i].length; j++) {
 
             if (!tableau[i][j].open) continue;
 
             for (let k = 0; k < 7; k++) {
+
                 if (tableau[k].length == 0 && tableau[i][j].val == 13 && j != 0) {
 
                     saveMove(tableau[i][j]);
@@ -179,24 +145,13 @@ const checkFirst = () => {
     }
 
     return false;
-
 }
 
 const ckeckWaste = () => {
 
-    // console.log("CHECKWAIST");
-
-    let reversed = false;
-
     while (true) {
 
-        // console.log('TABLEAU: \n', tableau);
-        // console.log('FOUNDATIONS: \n', foundations);
-        // console.log('WAIST: \n', waist);
-        // console.log('STOCK: \n', stock);
-
         if (waist.length == 0) {
-
             if (stock.length == 0) return false;
 
             saveMove(stock[stock.length - 1]);
@@ -207,7 +162,6 @@ const ckeckWaste = () => {
         for (let i = 0; i < 4; i++) {
 
             if (foundations[i].length == 0) {
-
                 if (waist[waist.length - 1].val == 1) {
 
                     saveMove(waist[waist.length - 1]);
@@ -229,15 +183,12 @@ const ckeckWaste = () => {
 
             foundations[i][foundations[i].length - 1].open = true;
 
-                // console.log(i);
-
             return true;
         }
 
         for (let i = 0; i < 7; i++) {
 
             if (tableau[i].length === 0) {
-
                 if (waist[waist.length - 1].val === 13) {
 
                     saveMove(waist[waist.length - 1]);
@@ -261,7 +212,6 @@ const ckeckWaste = () => {
             }
         }
         
-
         if (stock.length == 0) return false;
 
         saveMove(stock[stock.length - 1]);
@@ -304,20 +254,9 @@ const saveMove = (card) => {
 const getMoves = (encDeck) => {
 
     reset();
-
     setDeck(encDeck);
-
-    console.log(deck);
-
-    // encriptDeck();
-
-    // decriptDeck();
-
     setTableau();
-
     play();
-
-    console.log(foundations);
 
     if (solved()) console.log('SOLVED');
 

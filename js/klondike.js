@@ -1,6 +1,6 @@
 const fieldSize = 28;
 const deckSize = 52;
-let reverses = 2;
+let reverses = 0;
 const suit = {
     '♥': 'heart',
     '♦': 'diamond',
@@ -111,8 +111,8 @@ const shake = (card) => {
     }, {once: true})); 
     
     
-    // zoomCards.forEach(card => card.firstElementChild.firstElementChild.style.transition = 'transform 0.25s linear');
-    // zoomCards.forEach(card => card.firstElementChild.firstElementChild.style.transform = "scale(1.1)");
+    // shakeCards.forEach(card => card.firstElementChild.firstElementChild.style.transition = 'transform 0.25s linear');
+    // shakeCards.forEach(card => card.firstElementChild.firstElementChild.style.transform = "scale(1.1)");
     shakeCards.forEach(card => card.firstElementChild.classList.add("shake"));
 
 }
@@ -323,7 +323,7 @@ const getDeck = () => {
 
     let encDeck = decks[n];
 
-    console.log('DECK: ', n)
+    // console.log('DECK: ', n)
     // encDeck = 'ljvySbcmCfTariIgPuYKndNsHQqEtzWXRkowDLAUJZxVhBepGFOM';
     let deck = [];
 
@@ -659,7 +659,7 @@ const setTable = ({reset = true} = {}) => {
 
 const reverseStock = ({final = false} = {}) => {
 
-    if (document.querySelectorAll('.waste:not(.cell)').length == 0) return; 
+    // if (document.querySelectorAll('.waste:not(.cell)').length == 0) return; 
     
     disableCards();
 
@@ -750,9 +750,9 @@ const reverseStock = ({final = false} = {}) => {
     } else {
 
         setTimeout(() => {
-            reverses = 2;
-            document.querySelector('.stock.cell').classList.remove('reload', 'reverse1');
-            document.querySelector('.stock.cell').classList.add('reverse2');
+            reverses = 0;
+            document.querySelector('.stock.cell').classList.remove('reload', 'reverse1', 'reverse2');
+            document.querySelector('.stock.cell').classList.add('reverse');
         }, n * 50 + 700);
     }
 
@@ -787,9 +787,11 @@ const drawCard = (card) => {
 
     let wasteCards = document.querySelectorAll(".waste:not(.cell)");
 
-    // card.style.zIndex = zIndex();
+    card.style.zIndex = zIndex();
 
-    card.style.zIndex = Math.pow(2, wasteCards.length + 1);
+    // card.style.zIndex = Math.pow(2, wasteCards.length + 1);
+
+    // card.style.zIndex = wasteCards.length <= 2 ? Math.pow(3, wasteCards.length) : 9 * Math.pow(2, wasteCards.length - 2);
 
     card.querySelector(".card").classList.add("zoom");
     card.classList.remove("stock");
@@ -801,8 +803,10 @@ const drawCard = (card) => {
     let cards = document.querySelectorAll(".stock:not(.cell)");
 
     if (cards.length > 0) return;
+
+    if (!aiMode()) setTimeout(enableReloadButton, 600);
         
-    reverses > 0 ? setTimeout(enableReverseButton, 600) : setTimeout(enableReloadButton, 600);
+    // reverses > 0 ? setTimeout(enableReverseButton, 600) : setTimeout(enableReloadButton, 600);
   
     // if (lost()) setTimeout(gameOver, 600);
 }
@@ -953,12 +957,14 @@ const moveToFounation = (card, n, zIndex) => {
         card.classList.remove('move2f');
          
         card.style.zIndex = zIndex + 1;
-        enableCard(card);
 
-        for (let card of cards) {
+        if (!win()) {
             enableCard(card);
-        }
 
+            for (let card of cards) {
+                enableCard(card);
+            }
+        }
     }, {once: true}); 
 
 
@@ -995,7 +1001,11 @@ const moveToFounation = (card, n, zIndex) => {
 
     // console.log("WIN", win());
 
-    if (win()) setTimeout(resetGame, 2000);
+    if (win()) {
+        disableReloadButton();
+        disableCards();
+        setTimeout(resetGame, 2000);
+    }
     
     return true;
 }
@@ -1282,13 +1292,13 @@ const moveToColumn = (card, n0, n, topCard) => {
 
             // card.style.zIndex = 100;
 
-            console.log(gap, cellGap, Math.abs(gap - cellGap));
+            // console.log(gap, cellGap, Math.abs(gap - cellGap));
 
             disableCard(card);
 
             card.classList.add('move2c');
 
-            console.log('COMPRESS START');
+            // console.log('COMPRESS START');
 
             card.style.transition = `all 0.3s 0.0s linear`;
             card.style.transform = `translate(${offsetLeft - 2}px, ${offsetTop - offset}px)`;
@@ -1299,7 +1309,7 @@ const moveToColumn = (card, n0, n, topCard) => {
 
                 enableCard(card);
 
-                console.log('COMPRESS END');
+                // console.log('COMPRESS END');
 
         
                 card.classList.remove('move2c');        
@@ -1361,7 +1371,7 @@ const decompressCards = (col) => {
 
             if (Math.abs(gap - cellGap) < 1) return;
 
-            console.log(gap, cellGap, Math.abs(gap - cellGap));
+            // console.log(gap, cellGap, Math.abs(gap - cellGap));
 
             // console.log(gap, cellGap);
 
@@ -1563,10 +1573,10 @@ const reverseNextCard = (col) => {
     }, {once: true}); 
 
     topCard.querySelectorAll('.front, .back').forEach(card => {
-        card.style.transition = 'all 0.5s 0.1s linear';
+        card.style.transition = 'all 0.5s 0.0s linear';
     });    
-    topCard.querySelector(".card").classList.add("zoom");
-    topCard.classList.toggle("flip");
+    topCard.querySelector('.card').classList.add('zoom');
+    topCard.classList.toggle('flip');
 
     topCard.classList.add('move2c');
 
@@ -1709,7 +1719,10 @@ const enableReverseButton = () => {
 } 
 
 const refreshGame = () => {
+
     disableCards();
+    disableReloadButton();
+
     let timeOut = 0;
 
     let cards = document.querySelectorAll('.card-wrap');
@@ -1725,25 +1738,18 @@ const refreshGame = () => {
     setTimeout(() => {
         let delay = clearTable();
         setTimeout(setTable, delay * 1000 + 1000, {reset: false});        
-        setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
+        setTimeout(enableCards, delay * 1000 + 1000 + 4500);  
     }, timeOut); 
 }
 
 const enableReloadButton = () => {
 
-    document.querySelector('.stock.cell').addEventListener('mousedown', (e) => {
-        // disableCards();
-        // setTimeout(() => {
-        //     let delay = clearTable();
-        //     setTimeout(setTable, delay * 1000 + 1000, {reset: false});        
-        //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
-        // }, 500); 
-        
-        refreshGame();
+    let button =  document.querySelector('.stock.cell');
+    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    }, {once: true});
+    button.addEventListener(event, refreshGame, {once: true});
     
-    document.querySelector('.stock.cell').addEventListener('touchstart', (e) => {
+    // document.querySelector('.stock.cell').addEventListener('touchstart', (e) => {
         // disableCards();
         // setTimeout(() => {
         //     let delay = clearTable();
@@ -1751,12 +1757,21 @@ const enableReloadButton = () => {
         //     setTimeout(enableCards, delay * 1000 + 1000 + 3500);  
         // }, 500);  
 
-        refreshGame();
+        // refreshGame();
 
-    }, {once: true});
+    // }, {once: true});
+}
+
+const disableReloadButton = () => {
+
+    let button =  document.querySelector('.stock.cell');
+    let event = touchScreen() ? 'touchstart' : 'mousedown';
+
+    button.removeEventListener(event, refreshGame, {once: true});
 }
 
 const enableCard = (card) => {
+
 
     card = card.currentTarget ? card.currentTarget : card;
 
@@ -1776,12 +1791,15 @@ const enableCard = (card) => {
 
 const enableCards = () => {    
 
+    // console.log("ENABLE");
+
     for (let card of document.querySelectorAll('.card-wrap')){
         enableCard(card);
     }
 }
 
 const disableCard = (card) => {
+    
     if (touchScreen()){
         card.removeEventListener("touchstart", turn);
         card.removeEventListener("touchend", removeZoom);
@@ -1794,7 +1812,10 @@ const disableCard = (card) => {
 } 
 
 const disableCards = () => {
-    for (let card of document.querySelectorAll('.card-wrap')){
+
+    // console.log("DISABLE");
+
+    for (let card of document.querySelectorAll('.card-wrap')) {
         disableCard(card);
     }
 }
@@ -1843,15 +1864,15 @@ const resetCard = (e) => {
 
 const aiPlay = () => {
 
-    console.log('AIPLAY');
+    // console.log('AIPLAY');
 
     let event = new Event('mousedown');
     let cards = document.querySelectorAll(".card-wrap");
     let encDeck = encriptDeck();
     movesAI = getMoves(encDeck);
-    console.log(encDeck);
+    // console.log(encDeck);
 
-    console.log(moves);
+    // console.log(moves);
 
     const play = () => {
 
@@ -1935,12 +1956,12 @@ const clearTableOld = () => {
 
         cards[i] = document.querySelectorAll(`[data-f="${i + 1}"]`);
 
-        console.log(cards[i]);
+        // console.log(cards[i]);
 
         orderedCards[i] = order(cards[i]);
     }
 
-    console.table(orderedCards);
+    // console.table(orderedCards);
 
 
     // let order = pileOrder(cards);
@@ -1989,10 +2010,12 @@ const clearTableOld = () => {
 
 const clearTable = () => {
 
-    reverses = 2;
+    reverses = 0;
     let delay = 0;
 
     delay = reverseStock({final: true});
+
+    console.log(delay);
 
     delay = clearField(delay);
 
@@ -2028,12 +2051,12 @@ const clearFoundations = (delay, {final = false} = {}) => {
 
         cards[i] = document.querySelectorAll(`[data-f="${i + 1}"]`);
 
-        console.log(cards[i]);
+        // console.log(cards[i]);
 
         orderedCards[i] = order(cards[i]);
     }
 
-    console.table(orderedCards);
+    // console.table(orderedCards);
 
     let stockCell = document.querySelector('.stock');
 
@@ -2115,12 +2138,12 @@ const clearField = (delay) => {
 
         cards[i] = document.querySelectorAll(`[data-col="${i + 1}"]`);
 
-        console.log(cards[i]);
+        // console.log(cards[i]);
 
         orderedCards[i] = order(cards[i]);
     }
 
-    console.table(orderedCards);
+    // console.table(orderedCards);
 
     let stockCell = document.querySelector('.stock');
 
@@ -2315,7 +2338,7 @@ const designedShow = () => {
         setTimeout(() => {
             setTable();        
             // setTimeout(enableCards, 3700);  
-            aiMode() ? setTimeout(aiPlay, 5000) : setTimeout(enableCards, 3700);
+            aiMode() ? setTimeout(aiPlay, 5000) : setTimeout(enableCards, 4500);
         }, 0)
 
     }, {once: true}); 
@@ -2323,13 +2346,13 @@ const designedShow = () => {
 
 const resetGame = () => {
 
-    disableCards();
+    // disableCards();
     clearFoundations(0, {final: true});
     setTimeout(designedShow, 0);
     setTimeout(() => {
-        reverses = 2;
-        document.querySelector('.stock.cell').classList.remove('reload', 'reverse1');
-        document.querySelector('.stock.cell').classList.add('reverse2');
+        reverses = 0;
+        document.querySelector('.stock.cell').classList.remove('reload', 'reverse1', 'reverse2');
+        document.querySelector('.stock.cell').classList.add('reverse');
     }, 700);
 
     // setTimeout(() => {
@@ -2424,7 +2447,10 @@ const init = () => {
 
     // encriptDeck(); //
 
-    setTimeout(enableCards, 3700);  
+    setTimeout(enableCards, 4500);  
+
+    // setTimeout(disableCards, 10000);  
+
 
 
     if (aiMode()) setTimeout(() => {
@@ -2452,7 +2478,7 @@ const init = () => {
 
             window.addEventListener('visibilitychange', () => {
 
-                console.log("visibilitychange");
+                // console.log("visibilitychange");
 
                 document.hidden ? clearTimeout(timer) : nextMove();
 
@@ -2463,7 +2489,7 @@ const init = () => {
 
             window.addEventListener('visibilitychange', () => {
 
-                console.log("visibilitychange");
+                // console.log("visibilitychange");
 
                 document.hidden ? clearTimeout(timer) : nextMove();
 
@@ -2500,4 +2526,4 @@ const init = () => {
     // setTimeout(aiPlay, 4000);  
 }
 
-window.onload = () => document.fonts.ready.then(init);
+window.onload = () => document.fonts.ready.then(() => setTimeout(init, 500));

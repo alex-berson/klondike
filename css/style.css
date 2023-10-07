@@ -1,19 +1,22 @@
-@import url("flip.css");
+/* @import url("flip.css"); */
 
 @font-face {
     font-family: 'Roboto';
-    src: url(../fonts/Roboto-Regular-webfont.woff);
+    src: url(../fonts/roboto-regular.woff);
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url(../fonts/Roboto-Bold-webfont.woff);
+    src: url(../fonts/roboto-bold.woff);
     font-weight: bold;
 }
 
 :root {
     --table-size: 0.97;
-    --table-color: #214f11;
+    /* --table-color: #214f11; */
+
+    --table-color: #005000;
+
     --back-color: salmon;
     /* --table-width: 97vmin;
     --table-height: var(--table-width); */
@@ -31,7 +34,7 @@ body {
     height: 100%; 
     overflow: hidden;
     opacity: 0;
-    /* transition: opacity 1s ease-in-out; */
+    transition: opacity 1s ease-in-out;
 }
 
 html:hover {
@@ -133,11 +136,11 @@ html:hover {
 } */
 
 
-.foundation, .reverse1, .reverse2, .reload {
+.foundation, .reverse, .reverse1, .reverse2, .reload {
     position: relative; 
 }
 
-.foundation:after, .reverse1:after, .reverse2:after, .reload:after {
+.foundation:after, .reverse:after, .reverse1:after, .reverse2:after, .reload:after {
     content: 'A';
     display: grid;
     place-items: center;
@@ -153,9 +156,17 @@ html:hover {
     left: -1px;
 }
 
-/* .reverse:after {
+.reverse:after {
     content: '⭘';  
     font-size: 8.5vmin;
+}
+
+/* .reverse:after {
+    content: '';
+    background-image: url(../images/rotate-solid.svg);
+    background-repeat: no-repeat;
+    background-position: 50% 53%;
+    background-size: 7.3vmin 7.3vmin;
 } */
 
 /* .waste.cell:after {
@@ -250,6 +261,10 @@ html:hover {
     /* transition: opacity 2s ease-in-out; */
 
     /* display: none; */
+
+    background-color: transparent;
+    perspective: 1000px;
+
 }
 
 .card-wrap:hover, .stock, .refresh {
@@ -259,9 +274,23 @@ html:hover {
 .card {
     width: calc(var(--card-width));
     height: calc(var(--card-height));
+
+    /* position: relative;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    transform: rotateY(-180deg); */
+
+    /* transition: transform 0.6s;
+    transform-style: preserve-3d; */
+
+    transition: 0.5s;
+    transform-style: preserve-3d;
+    position: relative;
 }
 
-.front {
+
+.front, .back {
+
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -269,23 +298,31 @@ html:hover {
     height: var(--card-height);
     margin-left: 2px;
     margin-right: 2px;
+   
+    border-radius: 4px;
+
+    backface-visibility: hidden;
+    transition: 0.5s linear;
+
+}
+
+.front {
     background-color: white;
     border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 4px;
+    transform: rotateY(180deg);
 }
 
 .back {
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    background-color: var(--back-color);
-    width: calc(var(--card-width));
-    height: calc(var(--card-height));
-    margin-left: 2px;
-    margin-right: 2px;
     background-color: var(--back-color);
     border: 1px solid white;
-    border-radius: 4px;
+}
+
+.card-wrap.flip .front {
+    transform: rotateY(0deg);
+}
+
+.card-wrap.flip .back {
+    transform: rotateY(-180deg);
 }
 
 .top {
@@ -477,7 +514,7 @@ img {
         border-radius: 10px;
     }
 
-    .foundation:after, .reverse1:after, .reverse2:after, .reload:after {
+    .foundation:after, .reverse:after, .reverse1:after, .reverse2:after, .reload:after {
         border: 2px solid #003800;
         border-radius: 10px;
         left: -1px;
