@@ -1,83 +1,89 @@
-let deck = [];
-let stock = [];
-let waist = [];
-let foundations = [[],[],[],[]];
-let tableau = [[],[],[],[],[],[],[]];
-let moves = [];
+let moves, deck, stock, waste, foundations, tableau;
+let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
-const reset = () => {
+const setBoard = () => {
+    moves = [];
     deck = [];
     stock = [];
-    waist = [];
-    moves = [];
+    waste = [];
     foundations = [[],[],[],[]];
     tableau = [[],[],[],[],[],[],[]];
 }
 
 const setDeck = (encDeck) => {
 
-    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     let suits = [1,2,3,4];
-    let open = false;
 
     for (let char of encDeck) {
 
-        let val = Math.trunc(abc.indexOf(char) / 4) + 1;
-        let suit = suits[abc.indexOf(char) % 4];
-        let col = suit % 2 == 0 ? 'black' : 'red';
+        let val = Math.trunc(abc.indexOf(char) / nSuits) + 1;
+        let suit = suits[abc.indexOf(char) % nSuits];
+        let color = suit % 2 == 0 ? 'black' : 'red';
 
-        deck.push({val, suit, col, open});
+        deck.push({val, suit, color, open: false});
     }
-}
-
-const encriptDeckAI = () => {
-    
-    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let encDeck = '';
-
-    for (let card of deck) {
-
-        let char = abc[(card.val - 1) * 4 + card.suit - 1];
-
-        encDeck = encDeck + char;
-    }
-
-    return encDeck;
 }
 
 const setTableau = () => {
 
+    let maxColSize = 7;
+
     stock = [...deck];
 
-    for (let i = 0; i < 7; i++) {
-        for (let j = i; j < 7; j++) {
+    for (let i = 0; i < nColumns; i++) {
+        for (let j = i; j < maxColSize; j++) {
 
             let card = stock.pop();
+
             if (j == i) card.open = true;
+
             tableau[j].push(card);
         }
     }
 }
 
-const checkLast = () => {
+const saveMove = (card) => {
 
-   for (let i = 0; i < 7; i++) {
+    let encDeck = '';
+
+    for (let card of deck) {
+
+        let char = abc[(card.val - 1) * nSuits + card.suit - 1];
+
+        encDeck = encDeck + char;
+    }
+    
+    let char = abc[(card.val - 1) * nSuits + card.suit - 1];
+    let n = encDeck.indexOf(char);
+
+    moves.push(n);
+}
+
+const checkTopCards = () => {
+
+    const moveCard = (card, i, j) => {
+
+        saveMove(card);
+
+        foundations[j].push(card);
+        tableau[i].pop();
+
+        if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
+    }
+
+   for (let i = 0; i < nColumns; i++) {
 
         if (tableau[i].length == 0) continue;
 
         let card1 = tableau[i][tableau[i].length - 1];
 
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < nFoundations; j++) {
 
             if (foundations[j].length == 0) {
-                if (card1.val == 1) {
 
-                    saveMove(card1);
+                if (card1.val == ace) {
 
-                    foundations[j].push(card1);
-                    tableau[i].pop();
-
-                    if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
+                    moveCard(card1, i, j);
 
                     return true;
                 }
@@ -89,12 +95,7 @@ const checkLast = () => {
 
             if (card1.suit == card2.suit && card1.val - card2.val == 1) {
 
-                saveMove(card1);
-
-                foundations[j].push(card1);
-                tableau[i].pop();
-
-                if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
+                moveCard(card1, i, j);
 
                 return true;
             }
@@ -104,37 +105,32 @@ const checkLast = () => {
     return false;
 }
 
-const checkFirst = () => {
+const checkBottomCards = () => {
 
-    for (let i = 0; i < 7; i++) {
+    const moveCards = (i, j, k) => {
+
+        saveMove(tableau[i][j]);
+
+        let cards = tableau[i].splice(j, tableau[i].length - j);
+
+        tableau[k].push(...cards);
+
+        if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
+    }
+
+    for (let i = 0; i < nColumns; i++) {
+
         for (let j = 0; j < tableau[i].length; j++) {
 
             if (!tableau[i][j].open) continue;
 
-            for (let k = 0; k < 7; k++) {
+            for (let k = 0; k < nColumns; k++) {
 
-                if (tableau[k].length == 0 && tableau[i][j].val == 13 && j != 0) {
+                if ((tableau[k].length == 0 && tableau[i][j].val == king && j != 0) ||
+                    (tableau[k].length != 0 && tableau[k][tableau[k].length - 1].val - tableau[i][j].val == 1 &&
+                     tableau[i][j].color != tableau[k][tableau[k].length - 1].color)) {
 
-                    saveMove(tableau[i][j]);
-
-                    let cards = tableau[i].splice(j, tableau[i].length - j);
-
-                    tableau[k].push(...cards);
-
-                    if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
-
-                    return true;
-
-                } else if (tableau[k].length != 0 && tableau[k][tableau[k].length - 1].val - tableau[i][j].val == 1 &&
-                           tableau[i][j].col !== tableau[k][tableau[k].length - 1].col) {
-
-                    saveMove(tableau[i][j]);
-
-                    let cards = tableau[i].splice(j, tableau[i].length - j);
-
-                    tableau[k].push(...cards);
-
-                    if (tableau[i].length != 0) tableau[i][tableau[i].length - 1].open = true;
+                    moveCards(i, j, k);
 
                     return true;
                 }
@@ -147,66 +143,70 @@ const checkFirst = () => {
     return false;
 }
 
-const ckeckWaste = () => {
+const checkWaste = () => {
+
+    const drawCard = () => {
+
+        saveMove(stock[stock.length - 1]);
+            
+        waste.push(stock.pop());
+    }
+
+    const moveCard = (pile, i) => {
+
+        saveMove(waste[waste.length - 1]);
+
+        pile[i].push(waste.pop());
+
+        pile[i][pile[i].length - 1].open = true;
+    }
 
     while (true) {
 
-        if (waist.length == 0) {
+        if (waste.length == 0) {
+
             if (stock.length == 0) return false;
 
-            saveMove(stock[stock.length - 1]);
-            
-            waist.push(stock.pop());
+            drawCard();
         };
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < nFoundations; i++) {
 
             if (foundations[i].length == 0) {
-                if (waist[waist.length - 1].val == 1) {
 
-                    saveMove(waist[waist.length - 1]);
+                if (waste[waste.length - 1].val == ace) {
 
-                    foundations[i].push(waist.pop());
-                    foundations[i][foundations[i].length - 1].open = true;
+                    moveCard(foundations, i);
+
                     return true;
                 }
 
                 continue;
-            };
+            }
             
-            if (waist[waist.length - 1].val - foundations[i][foundations[i].length - 1].val != 1 ||
-                waist[waist.length - 1].suit != foundations[i][foundations[i].length - 1].suit) continue;
+            if (waste[waste.length - 1].val - foundations[i][foundations[i].length - 1].val != 1 ||
+                waste[waste.length - 1].suit != foundations[i][foundations[i].length - 1].suit) continue;
 
-            saveMove(waist[waist.length - 1]);
-
-            foundations[i].push(waist.pop());
-
-            foundations[i][foundations[i].length - 1].open = true;
+            moveCard(foundations, i);
 
             return true;
         }
 
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < nColumns; i++) {
 
-            if (tableau[i].length === 0) {
-                if (waist[waist.length - 1].val === 13) {
+            if (tableau[i].length == 0) {
 
-                    saveMove(waist[waist.length - 1]);
+                if (waste[waste.length - 1].val == king) {
 
-                    tableau[i].push(waist.pop());
-
-                    tableau[i][tableau[i].length - 1].open = true;
+                    moveCard(tableau, i);
 
                     return true;
                 }
-            } else if (tableau[i][tableau[i].length - 1].val - waist[waist.length - 1].val === 1 &&
-                    tableau[i][tableau[i].length - 1].col !== waist[waist.length - 1].col) {
 
-                saveMove(waist[waist.length - 1]);
+            } else if (tableau[i][tableau[i].length - 1].val - waste[waste.length - 1].val == 1 &&
+                    tableau[i][tableau[i].length - 1].color != waste[waste.length - 1].color) {
 
-                tableau[i].push(waist.pop());
-
-                tableau[i][tableau[i].length - 1].open = true;
+                moveCard(tableau, i);
 
                 return true;
             }
@@ -214,51 +214,21 @@ const ckeckWaste = () => {
         
         if (stock.length == 0) return false;
 
-        saveMove(stock[stock.length - 1]);
-
-        waist.push(stock.pop());
+        drawCard();
     }
 }
 
-const solved = () => {
+const playGame = () => {
 
-    for (let i = 0; i < 4; i++) {
-        if (foundations[i].length != 13) return false;
-    }
-
-    return true;
-}
-
-const play = () => {
-
-    while (true) {
-
-        if (checkLast()) continue;
-        if (checkFirst()) continue;
-        if (ckeckWaste()) continue;
-
-        break;
-    }
-}
-
-const saveMove = (card) => {
-
-    let abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let encDeck = encriptDeckAI();
-    let char = abc[(card.val - 1) * 4 + card.suit - 1];
-    let n = encDeck.indexOf(char);
-
-    moves.push(n);
+    while (checkTopCards() || checkBottomCards() || checkWaste()) {}
 }
 
 const getMoves = (encDeck) => {
 
-    reset();
+    setBoard();
     setDeck(encDeck);
     setTableau();
-    play();
-
-    if (solved()) console.log('SOLVED');
-
+    playGame();
+    
     return moves;
 }

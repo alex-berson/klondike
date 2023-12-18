@@ -3,724 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <title>Klondike</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="klondike,patience,solitaire,game,play,online,cards,table,red,black,kids,family">
+    <meta name="description" content="Build up four stacks of cards by suit from Ace to King.">
+    <meta name="keywords" content="solitaire,patience,table,card,game,play,online,logic,challenge,kids,family">
     <meta name="author" content="Alexander Berson">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="google" content="notranslate">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google" content="notranslate"> 
+
+    <meta name="apple-itunes-app" content="app-id=1581234549"> 
+    <!-- <meta name="apple-itunes-app" content="app-id=6472772619">  -->
+    <!-- <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Klondike">
+    <meta name="msapplication-TileColor" content="#016720">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="mask-icon" href="images/safari-pinned-tab.svg" color="#016720">  
+    <link rel="manifest" href="manifest.json"> -->
 
     <link rel="stylesheet" type="text/css" href="css/style.css">
+
+    <script src="js/preview.js" defer></script>
+
+    <script src="js/data.js" defer></script>
     <script src="js/solver.js" defer></script>
-    <script src="js/decks.js" defer></script>
     <script src="js/klondike.js" defer></script>
 </head>
 <body>
-    <!-- <div id="outer"> -->
-        <!-- <div id="middle"> -->
-            <!-- <div id="inner"> -->
-            <!-- <div class="container"> -->
-                <main>
-                    <div class="table">
-                        <div class="row">
-                            <div class="cell foundation"></div>
-                            <div class="cell foundation"></div>
-                            <div class="cell foundation"></div>
-                            <div class="cell foundation"></div>
-                            <div class="cell"></div>
-                            <div class="cell waste"></div>
-
-                            <!-- <div class="cell waste"><img src="images/rotate-solid.svg"</div> -->
-                            <div class="cell stock reverse"></div> 
-                            <!-- <div class="cell stock"><img src="images/refresh.svg" alt=""></div> -->
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>                         
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                            <div class="cell"></div>
-                        </div> 
-                        <div class="row">
-                            <div class="cell"></div>
-                        </div>
-                        <!-- <div id="designed">
-                            Designed by Alexander Berson
-                        </div> -->
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
+    <div class="table">
+        <div class="row">
+            <div class="cell foundation">A</div>
+            <div class="cell foundation">A</div>
+            <div class="cell foundation">A</div>
+            <div class="cell foundation">A</div>
+            <div class="cell"></div>
+            <div class="cell waste"></div>
+            <div class="cell stock reset"><div class="circle"></div></div> 
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>                         
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div> 
+        <div class="row">
+            <div class="cell"></div>
+        </div>
+        <template class="card-template">
+            <div class="card-wrap">
+                <div class="card">
+                    <div class="card-inner">
+                        <div class="front">
+                            <div class="top">
+                                <div class="rank"></div>
+                                <div class="suit"><img src=""></div>
                             </div>
+                            <div class="main"><img src=""></div>
                         </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
-                        <div class="card-wrap">
-                            <div class="card">
-                                <div class="front">
-                                    <div class="top">
-                                        <div class="rank"></div>
-                                        <div class="suit"><img src=""></div>
-                                    </div>
-                                    <div class="main"><img src=""></div>
-                                </div>
-                                <div class="back"></div>
-                            </div>
-                        </div>
+                        <div class="back"></div>
                     </div>
-                </main>
-                <div id ="designed">
-                    Designed by Alexander Berson
                 </div>
-            <!-- </div> -->
-            <!-- </div> -->
-        <!-- </div> -->
-    <!-- </div> -->
-        <!-- <div style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; height: 100vh"> -->
-
-        <!-- <div class="container">
-            <div id="designed">
-                Designed by Alexander Berson
             </div>
-        </div> -->
-            <!-- <div id="designed">
-                Designed by Alexander Berson
-            </div> -->
+        </template>
+    </div>
+    <div id="designed">
+        Designed by Alexander Berson
+    </div>
 </body>
 </html>
