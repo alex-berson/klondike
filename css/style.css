@@ -42,8 +42,6 @@ body {
     height: var(--table-height);
     margin: auto;
     margin-top: 3vmax;
-
-    /* background-color: gray; */
 }
 
 .row {
@@ -53,10 +51,9 @@ body {
     justify-content: flex-end; 
     width: var(--table-width);
     height: var(--card-height);
-    /* gap: 5px; */
 }
 
-.row:not(:nth-child(1)):not(:nth-child(2))  {
+.row:not(:nth-child(1)):not(:nth-child(2)) {
     margin-top: calc(var(--card-height) / 5 * 3 * -1);
 }
 
@@ -73,13 +70,9 @@ body {
     border: var(--border-width) solid var(--table-color);
     border-radius: calc(var(--card-width) / 10);
     color: var(--table-color);
-    /* font-size: 8vmin; */
     font-size:  calc(var(--card-width) / 1.5);
     font-weight: bold;
     opacity: 1;
-
-    /* border: var(--border-width) solid #003800; */
-    /* background-color:#003800; */
 }
 
 .cell:not(:first-child) {
@@ -96,20 +89,16 @@ body {
 }
 
 .circle {
-    /* width: 5vmin; */
-    /* height: 5vmin; */
-    width: calc(var(--card-width) / 2.8);
-    height: calc(var(--card-width) / 2.8);
+    width: calc(var(--card-width) / 2.7);
+    height: calc(var(--card-width) / 2.7);
     border: calc(var(--card-width) / 11) solid #005000;
     border-radius: 50%;
     background-color: transparent;
-    /* transform: translateY(0.3vmin); */
     transform: translateY(calc(var(--card-width) / 40));
 }
 
 .card-wrap {
     position: absolute;
-    /* cursor: pointer; */
     background-color: transparent;
     perspective: 1000px;
 }
@@ -170,17 +159,11 @@ body {
 
 .rank {
     font-weight: bold;
-    /* letter-spacing: -1.2vmin; */
-    /* letter-spacing: calc(var(--card-width) / -10); */
-    /* font-size: 6.4vmin; */
     font-size: calc(var(--card-width) / 1.9);
-
 }
 
 .ten {
-    /* text-indent: -0.3vmin; */
     letter-spacing: calc(var(--card-width) / -10);
-
     text-indent: calc(var(--card-width) / -40);
 }
 
@@ -282,7 +265,6 @@ img {
     animation: show 3.0s 2 ease-in-out forwards alternate;
 }
 
-
 @media (orientation: landscape) {
 
     .table {
@@ -316,14 +298,7 @@ img {
     }
 
     .circle {
-        /* width: 4.4vmin; */
-        /* height: 4.4vmin; */
-        width: calc(var(--card-width) / 2.7);
-        height: calc(var(--card-width) / 2.7);
         border: 8px solid #005000;
-        border-radius: 50%;
-        background-color: transparent;
-        transform: translateY(calc(var(--card-width) / 40));
     }
 
     .front {
@@ -337,13 +312,7 @@ img {
     }
 
     .rank {
-        /* font-size: 5.2vmin; */
         font-size:  calc(var(--card-width) / 2.3);
-
-        /* letter-spacing: -1vmin; */
-        
-        /* letter-spacing: calc(var(--card-width) / -12); */
-
     }
 
     .ten {

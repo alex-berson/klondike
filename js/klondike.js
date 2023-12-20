@@ -8,8 +8,6 @@ const king = 13;
 let transitionStartEvent = false;
 let aiTimer, aiMoves, screenVisible;
 
-// let num = 0; //
-
 const touchScreen = () => matchMedia('(hover: none)').matches;
 
 const orderCards = ([...cards]) => cards.sort((a, b) => Number(b.style.zIndex) - Number(a.style.zIndex));
@@ -39,7 +37,6 @@ const clearFoundations = (delay) => {
             card.classList.add('stock');
             card.removeAttribute('data-f');
 
-            // card.style.zIndex = 0;
             delay += interval;
 
             card.firstElementChild.firstElementChild.style.transition = `all ${duration}s ${delay}s linear`;
@@ -171,10 +168,6 @@ const designedShow = () => {
 
         setTable();    
 
-        // setTimeout(enableCards, 4500); 
-
-        // if (aiMode()) setTimeout(aiPlay, 5000, {init: false});
-
     }, {once: true}); 
 };
 
@@ -185,8 +178,6 @@ const gameOver = () => {
 }
 
 const shakeCards = (card) => {
-
-    // if (card.firstElementChild.classList.contains('shake')) return; //
 
     let cards = [card];
 
@@ -643,19 +634,6 @@ const nextMove = () => {
     if (document.hidden) return;
     if (aiMoves.length == 0) return;
 
-    // window.addEventListener('visibilitychange', changeMode);
-
-    // if (aiMoves.length == 95)  return;//
-
-    // if (num == 1) return;
-
-    // if (aiMoves.length == 8) { //
-
-    //     aiTimer = setTimeout(() => moveCards(cards[aiMoves.shift()]), 2500); //
-
-    //     return; //
-    // } //
-
     aiTimer = setTimeout(() => moveCards(cards[aiMoves.shift()]), 1000);
 }
 
@@ -680,8 +658,6 @@ const encriptDeck = () => {
 
 const changeMode = () => {
     
-    // console.log(document.hidden);
-
     if (document.hidden) {
         
         clearTimeout(aiTimer);
@@ -693,18 +669,11 @@ const changeMode = () => {
         nextMove();
         screenVisible = true;
     }
-
-    // document.hidden ? clearTimeout(aiTimer) : nextMove();
 }
 
 const aiPlay = () => {
 
     window.removeEventListener('visibilitychange', changeMode);
-    // if (init) {
-    //     window.addEventListener('visibilitychange', () => {
-    //         document.hidden ? clearTimeout(aiTimer) : nextMove();
-    //     });
-    // }
 
     setTimeout(() => window.addEventListener('visibilitychange', changeMode), 50);
 
@@ -713,8 +682,6 @@ const aiPlay = () => {
     let encDeck = encriptDeck();
 
     aiMoves = getMoves(encDeck);
-
-    // aiMoves = [3,2,1,0,7,6,5,4]; //
 
     nextMove();
 }
@@ -726,8 +693,6 @@ const aiMode = () => {
     let mode = urlParams.get('mode');
     
     return mode == 'ai';
-
-    // return true; //
 }
 
 const moveCards = (e) => {
@@ -794,10 +759,7 @@ const fillTableau = () => {
     let ua = navigator.userAgent;
     let safari = /Safari/.test(ua) && !/Chrome/.test(ua);
     let app = !document.URL.startsWith('http://') && !document.URL.startsWith('https://');
-    // let transitionStartAvail = transitionStartEvent && (safari || app);
-
     let transitionStartAvail = transitionStartEvent && safari || app;
-
 
     for (let i = 0; i < tableauSize; i++) {
 
@@ -829,8 +791,6 @@ const fillTableau = () => {
 
         card.addEventListener('transitionstart', (e) => {
 
-            // if (e.target != e.currentTarget) return;
-
             let card = e.currentTarget;
 
             if (transitionStartAvail) {
@@ -843,8 +803,6 @@ const fillTableau = () => {
         }, {once: true}); 
 
         card.addEventListener('transitionend', (e) => {
-
-            // if (e.target != e.currentTarget) return;
 
             let card = e.currentTarget;
             
@@ -869,18 +827,6 @@ const getDeck = () => {
     let ranks = {1:'A',11:'J',12:'Q',13:'K'};
     let n = Math.trunc(Math.random() * decks.length);
     let encDeck = decks[n];
-
-    // let encDeck = decks[num]; //
-
-    // if (num == 0) { //
-    //     encDeck = 'usvtzxywrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA'; //
-
-    // } else { //
-    //     encDeck = 'lVIujOFznKWEtQZyvUNdpLDCcagTHkhSRobqPXsefMiGwmxJYrBA'; //
-    // } //
-
-    // num++; //
-
     let deck = [];
 
     for (let char of encDeck) {
@@ -943,12 +889,6 @@ const setTable = ({shuffle = true} = {}) => {
     if (shuffle) setCards();
 
     setTimeout(fillTableau, 200);
-    
-    // if (num == 1) { //
-    //     setTimeout(fillTableau2, 200); //
-    // } else { //
-    //     setTimeout(fillTableau, 200); //
-    // } //
 }
 
 const resetGame = () => {
@@ -971,7 +911,6 @@ const resetGame = () => {
         let delay = clearTable();
 
         setTimeout(setTable, delay * 1000 + 1000, {shuffle: false});        
-        // setTimeout(enableCards, delay * 1000 + 1000 + 4500); 
 
     }, timeOut); 
 }
@@ -979,13 +918,9 @@ const resetGame = () => {
 const showBoard = () => {
 
     let body = document.querySelector('body');
-    // let ua = navigator.userAgent;
-    // let safari = /Safari/.test(ua) && !/Chrome/.test(ua);
-    // let app = !document.URL.startsWith('http://') && !document.URL.startsWith('https://');
 
     body.addEventListener('transitionstart', () => {
 
-        // if (safari || app) transitionStartEvent = true;
         transitionStartEvent = true;
     
     }, {once: true}); 
@@ -1010,11 +945,6 @@ const placeDeck = () => {
         card.style.top = stockCell.offsetTop + 'px';
 
         card.classList.add('stock');
-
-        // let offsetLeft = stockCell.getBoundingClientRect().left - card.getBoundingClientRect().left;
-        // let offsetTop = stockCell.getBoundingClientRect().top  - card.getBoundingClientRect().top ;
-
-        // card.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
     }
 }
 
@@ -1083,22 +1013,12 @@ const registerServiceWorker = () => {
 
 const init = () => {
 
-    // registerServiceWorker();
+    registerServiceWorker();
     disableTapZoom();
     setCardSize();
     placeDeck();
     showBoard();
     setTable();
-
-    // setTimeout(enableCards, 4500);
-   
-    // if (aiMode()) setTimeout(aiPlay, 5000); //
-
-    // if (aiMode()) setTimeout(aiPlay, 8000); //
-
-    // setTimeout(designedShow, 1000); //
-
-    // alert(safari());
 }
 
 window.onload = () => document.fonts.ready.then(() => setTimeout(init, 500));
