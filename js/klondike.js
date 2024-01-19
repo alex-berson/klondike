@@ -8,8 +8,6 @@ const king = 13;
 let transitionStartEvent = false;
 let aiTimer, aiMoves, screenVisible;
 
-const touchScreen = () => matchMedia('(hover: none)').matches;
-
 const orderCards = ([...cards]) => cards.sort((a, b) => Number(b.style.zIndex) - Number(a.style.zIndex));
 
 const clearFoundations = (delay) => {
@@ -691,7 +689,7 @@ const aiMode = () => {
     let queryString = window.location.search;
     let urlParams = new URLSearchParams(queryString);
     let mode = urlParams.get('mode');
-    
+
     return mode == 'ai';
 }
 
@@ -765,8 +763,11 @@ const fillTableau = () => {
 
         let card = cards[i];
         let cell = document.querySelectorAll('.cell')[i + nColumns];
-        let offsetLeft = cell.getBoundingClientRect().left - card.getBoundingClientRect().left;
-        let offsetTop = cell.getBoundingClientRect().top - card.getBoundingClientRect().top;
+        let style = window.getComputedStyle(card);
+        let matrix = new DOMMatrix(style.transform);
+        let offsetLeft = matrix.m41 - (card.getBoundingClientRect().left - cell.getBoundingClientRect().left);
+        let offsetTop = matrix.m42 - (card.getBoundingClientRect().top - cell.getBoundingClientRect().top);
+
 
         delay += interval;
 
@@ -941,8 +942,12 @@ const placeDeck = () => {
 
         table.appendChild(cardClone);
 
-        card.style.left = stockCell.offsetLeft + 'px';
-        card.style.top = stockCell.offsetTop + 'px';
+        let cellRect = stockCell.getBoundingClientRect();
+        let cardRect = card.getBoundingClientRect();
+        let offsetLeft = cellRect.left - cardRect.left;
+        let offsetTop = cellRect.top  - cardRect.top ;
+
+        card.style.transform = `translate(${offsetLeft}px, ${offsetTop}px)`;
 
         card.classList.add('stock');
     }
@@ -958,24 +963,23 @@ const setCardSize = () => {
 const enableReset = () => {
 
     let button = document.querySelector('.reset');
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    button.addEventListener(event, resetGame);
+    button.addEventListener('touchstart', resetGame);
+    button.addEventListener('mousedown', resetGame);
 }
 
 const disableReset = () => {
 
     let button = document.querySelector('.reset');
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
 
-    button.removeEventListener(event, resetGame);
+    button.removeEventListener('touchstart', resetGame);
+    button.removeEventListener('mousedown', resetGame);
 }
 
 const enableCard = (card) => {
 
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
-
-    card.addEventListener(event, moveCards);
+    card.addEventListener('touchstart', moveCards);
+    card.addEventListener('mousedown', moveCards);
 }
 
 const enableCards = () => {    
@@ -986,10 +990,9 @@ const enableCards = () => {
 }
 
 const disableCard = (card) => {
-
-    let event = touchScreen() ? 'touchstart' : 'mousedown';
     
-    card.removeEventListener(event, moveCards);
+    card.removeEventListener('touchstart', moveCards);
+    card.removeEventListener('mousedown', moveCards);
 } 
 
 const disableCards = () => {
@@ -1001,10 +1004,10 @@ const disableCards = () => {
 
 const disableTapZoom = () => {
 
-    const event = touchScreen() ? 'touchstart' : 'mousedown';
     const preventDefault = (e) => e.preventDefault();
 
-    document.addEventListener(event, preventDefault, {passive: false});
+    document.addEventListener('touchstart', preventDefault, {passive: false});
+    document.addEventListener('mousedown', preventDefault, {passive: false});
 }
 
 const registerServiceWorker = () => {

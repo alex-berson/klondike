@@ -12,7 +12,7 @@
 :root {
     --table-color: #005000;
     --back-color: salmon;
-    --card-width: unset;
+    --card-width: calc(97vmin / 7 * 0.86);
     --card-height: calc((var(--card-width) * 3.5 / 2.5));   
     --table-width: calc(var(--card-width) * 7 + 44px);
     --table-height: calc(var(--table-width) * 5 / 6);
@@ -31,7 +31,6 @@ body {
     overflow: hidden;
     opacity: 0;
     transition: opacity 1s ease;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .table {
@@ -72,7 +71,6 @@ body {
     color: var(--table-color);
     font-size:  calc(var(--card-width) / 1.5);
     font-weight: bold;
-    opacity: 1;
 }
 
 .cell:not(:first-child) {
@@ -159,7 +157,8 @@ body {
 
 .rank {
     font-weight: bold;
-    font-size: calc(var(--card-width) / 1.9);
+    font-size: calc(var(--card-width) / 1.9);    
+    pointer-events: none;
 }
 
 .ten {
@@ -288,27 +287,8 @@ img {
         margin-bottom: 50px;
     }
 
-    .cell {
-        border-radius: 10px;
-        font-size:  calc(var(--card-width) / 1.5);
-    }
-
     .cell:not(:first-child) {
         margin-left: 10px;
-    }
-
-    .circle {
-        border: 8px solid #005000;
-    }
-
-    .front {
-        border: var(--border-width) solid rgba(0,0,0,0.1);
-        border-radius: 10px;
-    }
-    
-    .back {
-        border: var(--border-width) solid white;
-        border-radius: 10px;
     }
 
     .rank {
@@ -341,3 +321,13 @@ img {
         }
     }
 }
+
+.noselect {
+    -webkit-tap-highlight-color: transparent;
+          -webkit-touch-callout: none;
+            -webkit-user-select: none; 
+               -moz-user-select: none; 
+                -ms-user-select: none; 
+                    user-select: none; 
+}
+    
